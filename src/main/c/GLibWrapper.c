@@ -2,6 +2,7 @@
 #include <dev_codex_java_glibc_StdLib.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,10 +18,37 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_glibc_StdIO_fopen(JNIEnv *env, jclas
     const char* filename = (*env)->GetStringUTFChars(env, jfilename, NULL);
     const char* modes = (*env)->GetStringUTFChars(env, jmodes, NULL);
     result = fopen(filename, modes);
-    (*env)->ReleaseStringUTFChars(env, filename, jfilename);
-    (*env)->ReleaseStringUTFChars(env, modes, jmodes);
+    (*env)->ReleaseStringUTFChars(env, jfilename, filename);
+    (*env)->ReleaseStringUTFChars(env, jmodes, modes);
 
-    return result;
+    return (jlong) result;
+}
+
+/*
+ * Class:     dev_codex_java_glibc_StdIO
+ * Method:    fread
+ * Signature: (JJJJ)J
+ */
+JNIEXPORT jlong JNICALL Java_dev_codex_java_glibc_StdIO_fread(JNIEnv *env, jclass clazz, jlong jptr, jlong jsize, jlong jn, jlong jstream) {
+    return fread((void*) jptr, (size_t) jsize, (size_t) jn, (FILE*) jstream);
+}
+
+/*
+ * Class:     dev_codex_java_glibc_StdIO
+ * Method:    fwrite
+ * Signature: (JJJJ)J
+ */
+JNIEXPORT jlong JNICALL Java_dev_codex_java_glibc_StdIO_fwrite(JNIEnv *env, jclass clazz, jlong jptr, jlong jsize, jlong jn, jlong js) {
+    return fwrite((void*) jptr, (size_t) jsize, (size_t) jn, (FILE*) js);
+}
+
+/*
+ * Class:     dev_codex_java_glibc_StdIO
+ * Method:    fseek
+ * Signature: (JJI)I
+ */
+JNIEXPORT jint JNICALL Java_dev_codex_java_glibc_StdIO_fseek(JNIEnv *env, jclass clazz, jlong jstream, jlong joff, jint jwhence) {
+    return fseek((FILE*) jstream, (long) joff, (int) jwhence);
 }
 
 /*
@@ -28,8 +56,8 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_glibc_StdIO_fopen(JNIEnv *env, jclas
  * Method:    malloc
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_dev_codex_java_glibc_StdLib_malloc(JNIEnv *env, jclass clazz, jlong size) {
-    return (jlong) malloc((size_t) size);
+JNIEXPORT jlong JNICALL Java_dev_codex_java_glibc_StdLib_malloc(JNIEnv *env, jclass clazz, jlong jsize) {
+    return (jlong) malloc((size_t) jsize);
 }
 
 /*
@@ -37,9 +65,10 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_glibc_StdLib_malloc(JNIEnv *env, jcl
  * Method:    free
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_dev_codex_java_glibc_StdLib_free(JNIEnv *env, jclass clazz, jlong ptr) {
-    free((void*) ptr)
+JNIEXPORT void JNICALL Java_dev_codex_java_glibc_StdLib_free(JNIEnv *env, jclass clazz, jlong jptr) {
+    free((void*) jptr);
 }
 
 #ifdef __cplusplus
 }
+#endif

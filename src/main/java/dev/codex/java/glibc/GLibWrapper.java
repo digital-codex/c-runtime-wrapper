@@ -46,13 +46,29 @@ public final class GLibWrapper {
         return new File(StdIO.fopen(filename, modes));
     }
 
+    public static long fread(Pointer ptr, long size, long n, File stream) {
+        return StdIO.fread(ptr.address(), size, n, stream.address());
+    }
+
+    public static long fwrite(Pointer ptr, long size, long n, File stream) {
+        return StdIO.fwrite(ptr.address(), size, n, stream.address());
+    }
+
+    public static int fseek(File stream, long off, int whence) {
+        return StdIO.fseek(stream.address(), off, whence);
+    }
+
+    public static int ftell(File stream) {
+        return StdIO.ftell(stream.address());
+    }
+
+    public static void rewind(File stream) {
+        StdIO.rewind(stream.address());
+    }
+
     // stdlib.h
-    //TODO(treyvon): param validation i.e non array type
-    //TODO(treyvon): null check on map.get()
     public static <T> Pointer malloc(Class<T> type) {
-        return GLibWrapper.constructors.get(type).construct(
-                StdLib.malloc(GLibWrapper.sizes.get(type))
-        );
+        return GLibWrapper.malloc(type, 1);
     }
 
     //TODO(treyvon): param validation i.e multiple > 1 and array type
