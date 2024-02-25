@@ -33,7 +33,8 @@
                 <configuration>
                     <compilerArgs>
                         <arg>-h</arg>
-                        <arg>${project.build.directory}/include</arg>
+                        <arg>${project.build.directory}/include/glib-wrapper</arg>
+                        <arg>-verbose</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
