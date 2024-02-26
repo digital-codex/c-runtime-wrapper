@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.26)
-project(GLibWrapper C)
+project(CRuntimeWrapper C)
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
 
 set(
 		SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/src/main/c/GLibWrapper.c
+		${CMAKE_CURRENT_SOURCE_DIR}/src/main/c/CRuntimeWrapper.c
 )
 
 set(
@@ -21,12 +21,12 @@ add_custom_target(
 )
 set(
 		CMAKE_LIBRARY_OUTPUT_DIRECTORY
-		${CMAKE_CURRENT_SOURCE_DIR}/src/main/resources
+		${CMAKE_CURRENT_SOURCE_DIR}/target/library
 )
 
-add_library(GLibWrapper SHARED ${SOURCES} ${INCLUDES})
+add_library(CRuntimeWrapper SHARED ${SOURCES} ${INCLUDES})
 target_include_directories(
-		GLibWrapper PRIVATE
+		CRuntimeWrapper PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}/target/include
 		$ENV{JAVA_HOME}/include $ENV{JAVA_HOME}/include/linux
 )

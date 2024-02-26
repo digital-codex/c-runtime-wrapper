@@ -5,11 +5,11 @@ import dev.codex.java.wrapper.pointer.Pointer;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class GLibCWrapper {
+public final class CRuntimeWrapper {
     static {
         System.loadLibrary("glib-wrapper");
     }
-    private GLibCWrapper() {
+    private CRuntimeWrapper() {
         super();
     }
 
@@ -18,9 +18,9 @@ public final class GLibCWrapper {
     private static final Long FILE_SIZE = 216L;
     private static final Long STRUCT_IFREQ_SIZE = 40L;
     static {
-        GLibCWrapper.sizes.put(File.class, GLibCWrapper.FILE_SIZE);
-        GLibCWrapper.sizes.put(
-                InterfaceRequest.class, GLibCWrapper.STRUCT_IFREQ_SIZE
+        CRuntimeWrapper.sizes.put(File.class, CRuntimeWrapper.FILE_SIZE);
+        CRuntimeWrapper.sizes.put(
+                InterfaceRequest.class, CRuntimeWrapper.STRUCT_IFREQ_SIZE
         );
     }
 
@@ -28,17 +28,16 @@ public final class GLibCWrapper {
     private interface Constructor {
         Pointer construct(long address);
     }
-    private static final Map<Class<?>, Constructor> constructors
-            = new HashMap<>();
+    private static final Map<Class<?>, Constructor> constructors = new HashMap<>();
     static {
-        GLibCWrapper.RegisterConstructor(File.class, File::new);
-        GLibCWrapper.RegisterConstructor(
+        CRuntimeWrapper.RegisterConstructor(File.class, File::new);
+        CRuntimeWrapper.RegisterConstructor(
                 InterfaceRequest.class, InterfaceRequest::new
         );
     }
 
     private static <T> void RegisterConstructor(Class<T> type, Constructor constructor) {
-        GLibCWrapper.constructors.put(type, constructor);
+        CRuntimeWrapper.constructors.put(type, constructor);
     }
 
     // stdio.h
@@ -72,16 +71,16 @@ public final class GLibCWrapper {
 
     // stdlib.h
     public static <T> Pointer malloc(Class<T> type) {
-        return GLibCWrapper.malloc(type, 1);
+        return CRuntimeWrapper.malloc(type, 1);
     }
 
     //TODO(treyvon): param validation i.e multiple > 1 and array type
     //TODO(treyvon): null check on map.get()
     public static <T> Pointer malloc(Class<T> type, int multiple) {
-        return GLibCWrapper.constructors.get(type)
+        return CRuntimeWrapper.constructors.get(type)
                 .construct(
                         StdLib.malloc(
-                                GLibCWrapper.sizes.get(type) * multiple
+                                CRuntimeWrapper.sizes.get(type) * multiple
                         )
                 );
     }
