@@ -1,4 +1,4 @@
-package dev.codex.java.glibc;
+package dev.codex.java.wrapper.runtime;
 
 final class StdLib {
     private StdLib() {

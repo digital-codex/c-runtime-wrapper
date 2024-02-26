@@ -1,6 +1,6 @@
-package dev.codex.java.glibc;
+package dev.codex.java.wrapper.runtime;
 
-import dev.codex.java.pointer.AbstractPointer;
+import dev.codex.java.wrapper.pointer.AbstractPointer;
 
 public class InterfaceRequest extends AbstractPointer {
     public static final int NAME_SIZE = 16;
@@ -34,5 +34,10 @@ public class InterfaceRequest extends AbstractPointer {
     //TODO(treyvon): add type safety on flags
     public void setFlags(short flags) {
         this.flags = flags;
+    }
+
+    @Override
+    public String toString() {
+        return Long.toHexString(this.address);
     }
 }

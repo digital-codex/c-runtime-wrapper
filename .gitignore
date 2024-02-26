@@ -3,6 +3,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Shared objects ###
+*.so
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

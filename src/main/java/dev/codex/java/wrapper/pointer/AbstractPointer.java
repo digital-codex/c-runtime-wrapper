@@ -1,4 +1,4 @@
-package dev.codex.java.pointer;
+package dev.codex.java.wrapper.pointer;
 
 public abstract class AbstractPointer implements Pointer {
     protected final long address;

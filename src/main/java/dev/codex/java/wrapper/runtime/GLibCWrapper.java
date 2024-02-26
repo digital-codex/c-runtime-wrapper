@@ -1,15 +1,15 @@
-package dev.codex.java.glibc;
+package dev.codex.java.wrapper.runtime;
 
-import dev.codex.java.pointer.Pointer;
+import dev.codex.java.wrapper.pointer.Pointer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class GLibWrapper {
+public final class GLibCWrapper {
     static {
         System.loadLibrary("glib-wrapper");
     }
-    private GLibWrapper() {
+    private GLibCWrapper() {
         super();
     }
 
@@ -18,9 +18,9 @@ public final class GLibWrapper {
     private static final Long FILE_SIZE = 216L;
     private static final Long STRUCT_IFREQ_SIZE = 40L;
     static {
-        GLibWrapper.sizes.put(File.class, GLibWrapper.FILE_SIZE);
-        GLibWrapper.sizes.put(
-                InterfaceRequest.class, GLibWrapper.STRUCT_IFREQ_SIZE
+        GLibCWrapper.sizes.put(File.class, GLibCWrapper.FILE_SIZE);
+        GLibCWrapper.sizes.put(
+                InterfaceRequest.class, GLibCWrapper.STRUCT_IFREQ_SIZE
         );
     }
 
@@ -31,17 +31,21 @@ public final class GLibWrapper {
     private static final Map<Class<?>, Constructor> constructors
             = new HashMap<>();
     static {
-        GLibWrapper.RegisterConstructor(File.class, File::new);
-        GLibWrapper.RegisterConstructor(
+        GLibCWrapper.RegisterConstructor(File.class, File::new);
+        GLibCWrapper.RegisterConstructor(
                 InterfaceRequest.class, InterfaceRequest::new
         );
     }
 
     private static <T> void RegisterConstructor(Class<T> type, Constructor constructor) {
-        GLibWrapper.constructors.put(type, constructor);
+        GLibCWrapper.constructors.put(type, constructor);
     }
 
     // stdio.h
+    public static int fclose(File stream) {
+        return StdIO.fclose(stream.address());
+    }
+
     public static File fopen(String filename, String modes) {
         return new File(StdIO.fopen(filename, modes));
     }
@@ -68,16 +72,16 @@ public final class GLibWrapper {
 
     // stdlib.h
     public static <T> Pointer malloc(Class<T> type) {
-        return GLibWrapper.malloc(type, 1);
+        return GLibCWrapper.malloc(type, 1);
     }
 
     //TODO(treyvon): param validation i.e multiple > 1 and array type
     //TODO(treyvon): null check on map.get()
     public static <T> Pointer malloc(Class<T> type, int multiple) {
-        return GLibWrapper.constructors.get(type)
+        return GLibCWrapper.constructors.get(type)
                 .construct(
                         StdLib.malloc(
-                                GLibWrapper.sizes.get(type) * multiple
+                                GLibCWrapper.sizes.get(type) * multiple
                         )
                 );
     }

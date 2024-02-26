@@ -11,8 +11,8 @@ set(
 
 set(
 		INCLUDES
-		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_glibc_StdIO.h
-		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_glibc_StdLib.h
+		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_StdIO.h
+		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_StdLib.h
 )
 
 add_custom_target(
@@ -21,7 +21,7 @@ add_custom_target(
 )
 set(
 		CMAKE_LIBRARY_OUTPUT_DIRECTORY
-		${CMAKE_CURRENT_SOURCE_DIR}/target/library
+		${CMAKE_CURRENT_SOURCE_DIR}/src/main/resources
 )
 
 add_library(GLibWrapper SHARED ${SOURCES} ${INCLUDES})
