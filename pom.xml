@@ -43,6 +43,11 @@
                                 <ccompiler>clang</ccompiler>
                                 <cxxcompiler>clang++</cxxcompiler>
                             </toolchain>
+                            <target>CRuntimeWrapper</target>
+                            <options>
+                                <option>-j</option>
+                                <opiton>10</opiton>
+                            </options>
                         </configuration>
                     </execution>
                 </executions>
