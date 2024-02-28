@@ -62,7 +62,20 @@
                     </includes>
                 </configuration>
             </plugin>
-            <!-- TODO: maven-nar-plugin -->
+            <plugin>
+                <groupId>dev.codex.java.maven</groupId>
+                <artifactId>nar-maven-plugin</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>default-nar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>nar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
