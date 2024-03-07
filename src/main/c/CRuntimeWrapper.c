@@ -1,14 +1,16 @@
 #include <dev_codex_java_wrapper_runtime_StdIO.h>
 #include <dev_codex_java_wrapper_runtime_StdLib.h>
+#include <dev_codex_java_wrapper_runtime_FCntl.h>
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     dev_codex_java_glibc_StdIO
+ * Class:     dev_codex_java_wrapper_runtime_StdIO
  * Method:    fclose
  * Signature: (J)I
  */
@@ -17,7 +19,7 @@ JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_StdIO_fclose(JNIEnv *
 }
 
 /*
- * Class:     dev_codex_java_glibc_StdIO
+ * Class:     dev_codex_java_wrapper_runtime_StdIO
  * Method:    fopen
  * Signature: (Ljava/lang/String;Ljava/lang/String;)J
  */
@@ -34,7 +36,7 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StdIO_fopen(JNIEnv *
 }
 
 /*
- * Class:     dev_codex_java_glibc_StdIO
+ * Class:     dev_codex_java_wrapper_runtime_StdIO
  * Method:    fread
  * Signature: (JJJJ)J
  */
@@ -43,7 +45,7 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StdIO_fread(JNIEnv *
 }
 
 /*
- * Class:     dev_codex_java_glibc_StdIO
+ * Class:     dev_codex_java_wrapper_runtime_StdIO
  * Method:    fwrite
  * Signature: (JJJJ)J
  */
@@ -52,7 +54,7 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StdIO_fwrite(JNIEnv 
 }
 
 /*
- * Class:     dev_codex_java_glibc_StdIO
+ * Class:     dev_codex_java_wrapper_runtime_StdIO
  * Method:    fseek
  * Signature: (JJI)I
  */
@@ -61,7 +63,7 @@ JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_StdIO_fseek(JNIEnv *e
 }
 
 /*
- * Class:     dev_codex_java_glibc_StdLib
+ * Class:     dev_codex_java_wrapper_runtime_StdLib
  * Method:    malloc
  * Signature: (J)J
  */
@@ -70,12 +72,27 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StdLib_malloc(JNIEnv
 }
 
 /*
- * Class:     dev_codex_java_glibc_StdLib
+ * Class:     dev_codex_java_wrapper_runtime_StdLib
  * Method:    free
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_dev_codex_java_wrapper_runtime_StdLib_free(JNIEnv *env, jclass clazz, jlong jptr) {
     free((void*) jptr);
+}
+
+/*
+ * Class:     dev_codex_java_wrapper_runtime_FCntl
+ * Method:    open
+ * Signature: (Ljava/lang/String;I)I
+ */
+JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_FCntl_open(JNIEnv *env, jclass clazz, jstring jfile, jint joflag) {
+    int fd = -1;
+
+    const char* file = (*env)->GetStringUTFChars(env, jfile, NULL);
+    fd = open(file, (int) joflag);
+    (*env)->ReleaseStringUTFChars(env, jfile, file);
+
+    return (jint) fd;
 }
 
 #ifdef __cplusplus

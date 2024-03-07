@@ -88,4 +88,9 @@ public final class CRuntimeWrapper {
     public static void free(Pointer pointer) {
         StdLib.free(pointer.address());
     }
+
+    // fcntl.h
+    public static int open(String file, int oflag) {
+        return FCntl.open(file, oflag);
+    }
 }
