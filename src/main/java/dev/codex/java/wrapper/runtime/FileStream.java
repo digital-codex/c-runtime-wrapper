@@ -2,8 +2,8 @@ package dev.codex.java.wrapper.runtime;
 
 import dev.codex.java.wrapper.pointer.AbstractPointer;
 
-public final class File extends AbstractPointer {
-    File(long address) {
+public final class FileStream extends AbstractPointer {
+    FileStream(long address) {
         super(address);
     }
 

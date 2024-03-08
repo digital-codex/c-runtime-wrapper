@@ -18,7 +18,7 @@ public final class CRuntimeWrapper {
     private static final Long FILE_SIZE = 216L;
     private static final Long STRUCT_IFREQ_SIZE = 40L;
     static {
-        CRuntimeWrapper.sizes.put(File.class, CRuntimeWrapper.FILE_SIZE);
+        CRuntimeWrapper.sizes.put(FileStream.class, CRuntimeWrapper.FILE_SIZE);
         CRuntimeWrapper.sizes.put(
                 InterfaceRequest.class, CRuntimeWrapper.STRUCT_IFREQ_SIZE
         );
@@ -30,7 +30,7 @@ public final class CRuntimeWrapper {
     }
     private static final Map<Class<?>, Constructor> constructors = new HashMap<>();
     static {
-        CRuntimeWrapper.RegisterConstructor(File.class, File::new);
+        CRuntimeWrapper.RegisterConstructor(FileStream.class, FileStream::new);
         CRuntimeWrapper.RegisterConstructor(
                 InterfaceRequest.class, InterfaceRequest::new
         );
@@ -41,31 +41,31 @@ public final class CRuntimeWrapper {
     }
 
     // stdio.h
-    public static int fclose(File stream) {
+    public static int fclose(FileStream stream) {
         return StdIO.fclose(stream.address());
     }
 
-    public static File fopen(String filename, String modes) {
-        return new File(StdIO.fopen(filename, modes));
+    public static FileStream fopen(String filename, String modes) {
+        return new FileStream(StdIO.fopen(filename, modes));
     }
 
-    public static long fread(Pointer ptr, long size, long n, File stream) {
+    public static long fread(Pointer ptr, long size, long n, FileStream stream) {
         return StdIO.fread(ptr.address(), size, n, stream.address());
     }
 
-    public static long fwrite(Pointer ptr, long size, long n, File stream) {
+    public static long fwrite(Pointer ptr, long size, long n, FileStream stream) {
         return StdIO.fwrite(ptr.address(), size, n, stream.address());
     }
 
-    public static int fseek(File stream, long off, int whence) {
+    public static int fseek(FileStream stream, long off, int whence) {
         return StdIO.fseek(stream.address(), off, whence);
     }
 
-    public static int ftell(File stream) {
+    public static int ftell(FileStream stream) {
         return StdIO.ftell(stream.address());
     }
 
-    public static void rewind(File stream) {
+    public static void rewind(FileStream stream) {
         StdIO.rewind(stream.address());
     }
 
