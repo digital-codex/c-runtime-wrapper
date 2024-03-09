@@ -93,4 +93,8 @@ public final class CRuntimeWrapper {
     public static int open(String file, int oflag) {
         return FCntl.open(file, oflag);
     }
+
+    public static int open(String file, int oflag, AccessMode mode) {
+        return FCntl.open(file, oflag | mode.value());
+    }
 }
