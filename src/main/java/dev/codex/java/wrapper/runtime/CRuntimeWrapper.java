@@ -90,11 +90,15 @@ public final class CRuntimeWrapper {
     }
 
     // fcntl.h
-    public static int open(String file, int oflag) {
-        return FCntl.open(file, oflag);
+    public static int open(String file, Flag ...flags) {
+        return CRuntimeWrapper.open(file, AccessMode.READ_ONLY, flags);
     }
 
-    public static int open(String file, int oflag, AccessMode mode) {
+    public static int open(String file, AccessMode mode, Flag ...flags) {
+        int oflag = 0;
+        for (Flag flag : flags)
+            oflag = oflag | flag.value();
+
         return FCntl.open(file, oflag | mode.value());
     }
 }
