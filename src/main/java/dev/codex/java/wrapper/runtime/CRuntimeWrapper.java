@@ -97,4 +97,9 @@ public final class CRuntimeWrapper {
     public static int open(String file, AccessMode mode, OptionFlag...flags) {
         return FCntl.open(file, OptionFlag.of(flags).value() | mode.value());
     }
+
+    // unistd.h
+    public static int close(int fd) {
+        return UniStd.close(fd);
+    }
 }
