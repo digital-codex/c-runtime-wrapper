@@ -1,6 +1,6 @@
 package dev.codex.java.wrapper.runtime;
 
-import dev.codex.java.wrapper.pointer.AbstractPointer;
+import dev.codex.java.wrapper.type.AbstractPointer;
 
 public class InterfaceRequest extends AbstractPointer {
     public static final int NAME_SIZE = 16;
@@ -8,12 +8,12 @@ public class InterfaceRequest extends AbstractPointer {
     private byte[] name;
     private short flags;
 
-    InterfaceRequest(long address) {
-        this(address, new byte[InterfaceRequest.NAME_SIZE]);
+    InterfaceRequest(Long address, long size) {
+        this(address, size, new byte[InterfaceRequest.NAME_SIZE]);
     }
 
-    InterfaceRequest(long address, byte[] name) {
-        super(address);
+    InterfaceRequest(Long address, long size, byte[] name) {
+        super(address, size);
         this.name = name;
         this.flags = 0;
     }
@@ -34,10 +34,5 @@ public class InterfaceRequest extends AbstractPointer {
     //TODO(treyvon): add type safety on flags
     public void setFlags(short flags) {
         this.flags = flags;
-    }
-
-    @Override
-    public String toString() {
-        return Long.toHexString(this.address);
     }
 }

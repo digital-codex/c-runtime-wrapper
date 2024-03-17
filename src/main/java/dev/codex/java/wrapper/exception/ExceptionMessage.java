@@ -4,6 +4,7 @@ import java.util.Formatter;
 
 public class ExceptionMessage {
     public static final ExceptionMessage INVALID_POINTER_TYPE = new ExceptionMessage("Invalid pointer type: %s");
+    public static final ExceptionMessage ILLEGAL_POINTER_ARG = new ExceptionMessage("Illegal argument: `%s` %s");
 
     private static final Formatter formatter = new Formatter();
     private final String message;
