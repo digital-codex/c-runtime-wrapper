@@ -1,93 +1,101 @@
 package dev.codex.java.wrapper.runtime;
 
-import dev.codex.java.wrapper.pointer.Pointer;
+import dev.codex.java.wrapper.type.Pointer;
+import dev.codex.java.wrapper.type.Error;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 public final class CRuntimeWrapper {
     static {
-        System.loadLibrary("glib-wrapper");
+        System.load("/home/treyvon/src/c-runtime-wrapper/target/library/libCRuntimeWrapper.so");
     }
     private CRuntimeWrapper() {
         super();
     }
 
-    private static final Map<Class<?>, Long> sizes = new HashMap<>();
+    public static Pointer malloc(Class<? extends Pointer> clazz) throws Error {
+        Long ptr = StandardLibrary.malloc(PointerFactory.sizeof(clazz));
+        if (ptr == null) {
+            throw CRuntimeWrapper.strerror();
+        }
 
-    private static final Long FILE_SIZE = 216L;
-    private static final Long STRUCT_IFREQ_SIZE = 40L;
-    static {
-        CRuntimeWrapper.sizes.put(FileStream.class, CRuntimeWrapper.FILE_SIZE);
-        CRuntimeWrapper.sizes.put(
-                InterfaceRequest.class, CRuntimeWrapper.STRUCT_IFREQ_SIZE
-        );
+        return PointerFactory.instantiate(clazz).at(ptr).build();
     }
 
-    @FunctionalInterface
-    private interface Constructor {
-        Pointer construct(long address);
-    }
-    private static final Map<Class<?>, Constructor> constructors = new HashMap<>();
-    static {
-        CRuntimeWrapper.RegisterConstructor(FileStream.class, FileStream::new);
-        CRuntimeWrapper.RegisterConstructor(
-                InterfaceRequest.class, InterfaceRequest::new
-        );
+    public static void free(Pointer pointer) {
+        StandardLibrary.free(pointer.address());
     }
 
-    private static <T> void RegisterConstructor(Class<T> type, Constructor constructor) {
-        CRuntimeWrapper.constructors.put(type, constructor);
+    public static Pointer calloc(long nmemb, Class<? extends Pointer> clazz) throws Error {
+        if (nmemb <= 0) {
+            throw Error.ILLEGAL_NUMBER_OF_ELEMENTS;
+        }
+
+        Long ptr = StandardLibrary.calloc(nmemb, PointerFactory.sizeof(clazz));
+        if (ptr == null) {
+            throw CRuntimeWrapper.strerror();
+        }
+
+        return PointerFactory.instantiate(nmemb, clazz).at(ptr).build();
+    }
+
+    public static Pointer realloc(Pointer ptr, long size) throws Error {
+        Long oldAddress = ptr.address();
+        if (oldAddress == null) {
+            return CRuntimeWrapper.malloc(ptr.getClass());
+        }
+
+        if (size == 0) {
+            CRuntimeWrapper.free(ptr);
+            return null;
+        }
+
+        Long newAddress = StandardLibrary.realloc(oldAddress, size);
+        if (newAddress == null) {
+            throw CRuntimeWrapper.strerror();
+        }
+
+        if (Objects.equals(oldAddress, newAddress)) {
+            ptr.setSize(size);
+            return ptr;
+        }
+
+        return PointerFactory.instantiate(ptr.getClass()).at(newAddress).with(size).build();
+    }
+
+    public static Pointer reallocarray(Pointer ptr, long nmemb, long size) throws Error {
+        return CRuntimeWrapper.realloc(ptr, nmemb * size);
     }
 
     // stdio.h
     public static int fclose(FileStream stream) {
-        return StdIO.fclose(stream.address());
+        return StandardIO.fclose(stream.address());
     }
 
     public static FileStream fopen(String filename, String modes) {
-        return new FileStream(StdIO.fopen(filename, modes));
+        return new FileStream(StandardIO.fopen(filename, modes), PointerFactory.sizeof(FileStream.class));
     }
 
     public static long fread(Pointer ptr, long size, long n, FileStream stream) {
-        return StdIO.fread(ptr.address(), size, n, stream.address());
+        return StandardIO.fread(ptr.address(), size, n, stream.address());
     }
 
     public static long fwrite(Pointer ptr, long size, long n, FileStream stream) {
-        return StdIO.fwrite(ptr.address(), size, n, stream.address());
+        return StandardIO.fwrite(ptr.address(), size, n, stream.address());
     }
 
     public static int fseek(FileStream stream, long off, int whence) {
-        return StdIO.fseek(stream.address(), off, whence);
+        return StandardIO.fseek(stream.address(), off, whence);
     }
 
-    public static int ftell(FileStream stream) {
-        return StdIO.ftell(stream.address());
+    public static long ftell(FileStream stream) {
+        return StandardIO.ftell(stream.address());
     }
 
     public static void rewind(FileStream stream) {
-        StdIO.rewind(stream.address());
+        StandardIO.rewind(stream.address());
     }
 
-    // stdlib.h
-    public static <T> Pointer malloc(Class<T> type) {
-        return CRuntimeWrapper.malloc(type, 1);
-    }
-
-    //TODO(treyvon): param validation i.e multiple > 1 and array type
-    //TODO(treyvon): null check on map.get()
-    public static <T> Pointer malloc(Class<T> type, int multiple) {
-        return CRuntimeWrapper.constructors.get(type)
-                .construct(
-                        StdLib.malloc(
-                                CRuntimeWrapper.sizes.get(type) * multiple
-                        )
-                );
-    }
-
-    public static void free(Pointer pointer) {
-        StdLib.free(pointer.address());
-    }
 
     // fcntl.h
     public static int open(String file, OptionFlag...flags) {
@@ -95,11 +103,15 @@ public final class CRuntimeWrapper {
     }
 
     public static int open(String file, AccessMode mode, OptionFlag...flags) {
-        return FCntl.open(file, OptionFlag.of(flags).value() | mode.value());
+        return FileControl.open(file, OptionFlag.of(flags).value() | mode.value());
     }
 
     // unistd.h
     public static int close(int fd) {
         return UniStd.close(fd);
+    }
+
+    public static Error strerror() {
+        return new Error(null);
     }
 }
