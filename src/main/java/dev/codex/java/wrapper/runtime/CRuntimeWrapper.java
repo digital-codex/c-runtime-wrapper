@@ -67,13 +67,40 @@ public final class CRuntimeWrapper {
         return CRuntimeWrapper.realloc(ptr, nmemb * size);
     }
 
-    // stdio.h
-    public static int fclose(FileStream stream) {
-        return StandardIO.fclose(stream.address());
+    public static FileStream fopen(String pathname, AccessMode mode) throws Error {
+        Long address = StandardIO.fopen(pathname, mode.value());
+        if (address == null) {
+            throw CRuntimeWrapper.strerror();
+        }
+        return PointerFactory.instantiate(FileStream.class).at(address).build();
     }
 
-    public static FileStream fopen(String filename, String modes) {
-        return new FileStream(StandardIO.fopen(filename, modes), PointerFactory.sizeof(FileStream.class));
+    public static FileStream fdopen(FileDescriptor fd, AccessMode mode) {
+        AccessAssociation association = AccessAssociation.associations.getOrDefault(mode, AccessAssociation.READ);
+        int value = fd.mode().value() | OptionFlag.of(fd.options()).value();
+        for (OptionFlag option : association.options()) {
+            if ((value & option.value()) == 0) throw Error.INCOMPATIBLE_ACCESS_ASSOCIATION;
+        }
+        Long address = StandardIO.fdopen(fd.fd(), mode.value());
+        if (address == null) {
+            throw CRuntimeWrapper.strerror();
+        }
+        return PointerFactory.instantiate(FileStream.class).at(address).build();
+    }
+
+    public static FileStream freopen(String pathname, AccessMode mode, FileStream stream) {
+        Long address = StandardIO.freopen(pathname, mode.value(), stream.address());
+        if (address == null) {
+            throw CRuntimeWrapper.strerror();
+        }
+        return PointerFactory.instantiate(FileStream.class).at(address).build();
+    }
+
+    public static void fclose(FileStream stream) {
+        int error = StandardIO.fclose(stream.address());
+        if (error == -1) {
+            throw CRuntimeWrapper.strerror();
+        }
     }
 
     public static long fread(Pointer ptr, long size, long n, FileStream stream) {
@@ -96,19 +123,43 @@ public final class CRuntimeWrapper {
         StandardIO.rewind(stream.address());
     }
 
-
-    // fcntl.h
-    public static int open(String file, OptionFlag...flags) {
-        return CRuntimeWrapper.open(file, AccessMode.READ_ONLY, flags);
+    public static FileDescriptor open(String pathname, OptionFlag...flags) throws Error {
+        return CRuntimeWrapper.open(pathname, AccessFlag.READ_ONLY, flags);
     }
 
-    public static int open(String file, AccessMode mode, OptionFlag...flags) {
-        return FileControl.open(file, OptionFlag.of(flags).value() | mode.value());
+    public static FileDescriptor open(String pathname, AccessFlag mode, OptionFlag...flags) throws Error {
+        int fd = FileControl.open(pathname, OptionFlag.of(flags).value() | mode.value());
+        if (fd == -1) {
+            throw CRuntimeWrapper.strerror();
+        }
+
+        return new FileDescriptor(fd, mode, flags);
+    }
+
+    public static FileDescriptor creat(String pathname) throws Error {
+        return CRuntimeWrapper.creat(pathname, AccessFlag.WRITE_ONLY);
+    }
+
+    public static FileDescriptor creat(String pathname, AccessFlag mode) throws Error {
+        return CRuntimeWrapper.open(pathname, mode, OptionFlag.CREAT, OptionFlag.TRUNCATE);
+    }
+
+    public static FileDescriptor openat(FileDescriptor dirfd, String pathname, OptionFlag... flags) throws Error {
+        return CRuntimeWrapper.openat(dirfd, pathname, AccessFlag.READ_ONLY, flags);
+    }
+
+    public static FileDescriptor openat(FileDescriptor dirfd, String pathname, AccessFlag mode, OptionFlag... flags) throws Error {
+        int fd = FileControl.openat(dirfd.fd(), pathname, OptionFlag.of(flags).value() | mode.value());
+        if (fd == -1) {
+            throw CRuntimeWrapper.strerror();
+        }
+
+        return new FileDescriptor(fd, mode, flags);
     }
 
     // unistd.h
-    public static int close(int fd) {
-        return UniStd.close(fd);
+    public static int close(FileDescriptor fd) {
+        return UniStd.close(fd.fd());
     }
 
     public static Error strerror() {

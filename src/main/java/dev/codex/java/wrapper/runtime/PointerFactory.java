@@ -1,8 +1,7 @@
 package dev.codex.java.wrapper.runtime;
 
-import dev.codex.java.wrapper.exception.IllegalPointerArgument;
+import dev.codex.java.wrapper.exception.IllegalArgumentException;
 import dev.codex.java.wrapper.exception.InvalidPointerType;
-import dev.codex.java.wrapper.type.Pair;
 import dev.codex.java.wrapper.type.Pointer;
 
 import java.util.HashMap;
@@ -69,7 +68,7 @@ public class PointerFactory {
             this.constructor = constructor;
 
             if (n <= 0) {
-                throw new IllegalPointerArgument("size", "cannot be less than or equal to 0");
+                throw new IllegalArgumentException("size", "cannot be less than or equal to 0");
             }
             this.size = PointerFactory.sizeof(clazz) * n;
         }
@@ -81,7 +80,7 @@ public class PointerFactory {
 
         public PointerBuilder<T> with(long size) {
             if (size <= 0) {
-                throw new IllegalPointerArgument("size", "cannot be less than or equal to 0");
+                throw new IllegalArgumentException("size", "cannot be less than or equal to 0");
             }
 
             this.size = size;
