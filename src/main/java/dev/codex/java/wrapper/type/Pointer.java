@@ -1,11 +1,14 @@
-package dev.codex.java.wrapper.pointer;
+package dev.codex.java.wrapper.type;
 
 import dev.codex.java.wrapper.runtime.CRuntimeWrapper;
 
 public interface Pointer extends AutoCloseable {
-    long address();
+    Long address();
 
-    default void close() throws Exception {
+    long getSize();
+    void setSize(long size);
+
+    default void close() {
         CRuntimeWrapper.free(this);
     }
 }
