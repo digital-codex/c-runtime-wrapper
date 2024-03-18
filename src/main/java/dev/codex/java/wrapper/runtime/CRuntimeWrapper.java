@@ -139,7 +139,7 @@ public final class CRuntimeWrapper {
     }
 
     public static void rewind(FileStream stream) {
-        StandardIO.rewind(stream.address());
+        CRuntimeWrapper.fseek(stream, 0, Whence.SEEK_SET);
     }
 
     public static void fgetpos(FileStream stream, FileStream.Position pos) throws Error {

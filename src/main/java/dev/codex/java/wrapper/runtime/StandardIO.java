@@ -18,7 +18,6 @@ final class StandardIO {
 
     static native int fseek(Long stream, long offset, int whence);
     static native long ftell(Long stream);
-    static native void rewind(Long stream);
     static native int fgetpos(Long stream, Long pos);
     static native int fsetpos(Long stream, Long pos);
 }

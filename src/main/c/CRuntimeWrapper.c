@@ -189,17 +189,6 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_ftell(JNI
 
 /*
  * Class:     dev_codex_java_wrapper_runtime_StandardIO
- * Method:    rewind
- * Signature: (Ljava/lang/Long;)V
- */
-JNIEXPORT void JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_rewind(JNIEnv *env, jclass clazz, jobject jstream) {
-    jclass long_clazz = (*env)->FindClass(env, "java/lang/Long");
-    jmethodID longValue = (*env)->GetMethodID(env, long_clazz, "longValue", "()J");
-    rewind((FILE*) (*env)->CallObjectMethod(env, jstream, longValue));
-}
-
-/*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
  * Method:    fgetpos
  * Signature: (Ljava/lang/Long;Ljava/lang/Long;)I
  */
