@@ -12,4 +12,9 @@ public final class FileStream extends AbstractPointer {
             super(address, size);
         }
     }
+
+    @Override
+    public void close() {
+        CRuntimeWrapper.fclose(this);
+    }
 }

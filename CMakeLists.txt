@@ -11,8 +11,11 @@ set(
 
 set(
 		INCLUDES
-		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_StdIO.h
-		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_StdLib.h
+		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_StandardLibrary.h
+		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_StandardIO.h
+		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_FileControl.h
+		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_UnixStandard.h
+		${CMAKE_CURRENT_SOURCE_DIR}/target/include/dev_codex_java_wrapper_runtime_Strings.h
 )
 
 add_custom_target(
