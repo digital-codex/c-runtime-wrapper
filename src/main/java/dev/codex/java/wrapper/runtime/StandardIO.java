@@ -13,8 +13,8 @@ final class StandardIO {
 
     static native int fclose(Long stream);
 
-    static native long fread(Long ptr, long size, long nmemb, Long stream);
-    static native long fwrite(Long ptr, long size, long nmemb, Long stream);
+    static native long fread(byte[] ptr, long size, long nmemb, Long stream);
+    static native long fwrite(byte[] ptr, long size, long nmemb, Long stream);
 
     static native int fseek(Long stream, long offset, int whence);
     static native long ftell(Long stream);

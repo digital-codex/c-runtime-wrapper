@@ -1,6 +1,6 @@
 package dev.codex.java.wrapper.runtime;
-final class UniStd {
-    private UniStd() {
+final class UnixStandard {
+    private UnixStandard() {
         super();
     }
 

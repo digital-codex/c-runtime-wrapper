@@ -6,4 +6,10 @@ public final class FileStream extends AbstractPointer {
     FileStream(Long address, long size) {
         super(address, size);
     }
+
+    public static class Position extends AbstractPointer {
+        Position(Long address, long size) {
+            super(address, size);
+        }
+    }
 }

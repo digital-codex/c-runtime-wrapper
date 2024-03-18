@@ -14,16 +14,4 @@ public final class AccessFlag {
     public int value() {
         return this.value;
     }
-
-    @Override
-    public int hashCode() {
-        return this.value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof AccessFlag that)) return false;
-        return this.value == that.value;
-    }
 }

@@ -29,7 +29,7 @@ public final class AccessAssociation {
     private AccessAssociation(AccessFlag mode, OptionFlag... options) {
         this.mode = mode;
         this.options = options;
-        this.value = this.mode.value() | OptionFlag.of(this.options).value();
+        this.value = this.mode.value() | OptionFlag.of(this.options);
     }
 
     public boolean contains(OptionFlag o) {

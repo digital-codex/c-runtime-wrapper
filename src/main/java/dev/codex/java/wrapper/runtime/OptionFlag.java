@@ -23,27 +23,15 @@ public final class OptionFlag {
         this.value = value;
     }
 
-    public static OptionFlag of(OptionFlag ...flags) {
+    public static int of(OptionFlag ...flags) {
         int value = 0;
         for (OptionFlag flag : flags)
             value = value | flag.value();
 
-        return new OptionFlag(value);
+        return value;
     }
 
     public int value() {
         return this.value;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof OptionFlag that)) return false;
-        return this.value == that.value;
     }
 }
