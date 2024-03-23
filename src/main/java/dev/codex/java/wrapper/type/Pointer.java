@@ -3,7 +3,7 @@ package dev.codex.java.wrapper.type;
 import dev.codex.java.wrapper.runtime.CRuntimeWrapper;
 
 public interface Pointer extends AutoCloseable {
-    Long address();
+    MemoryAddress address();
 
     long getSize();
     void setSize(long size);

@@ -1,14 +1,15 @@
 package dev.codex.java.wrapper.runtime;
 
 import dev.codex.java.wrapper.type.AbstractPointer;
+import dev.codex.java.wrapper.type.MemoryAddress;
 
 public final class FileStream extends AbstractPointer {
-    FileStream(Long address, long size) {
+    FileStream(MemoryAddress address, long size) {
         super(address, size);
     }
 
     public static class Position extends AbstractPointer {
-        Position(Long address, long size) {
+        Position(MemoryAddress address, long size) {
             super(address, size);
         }
     }

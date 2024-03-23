@@ -1,6 +1,7 @@
 package dev.codex.java.wrapper.runtime;
 
 import dev.codex.java.wrapper.type.AbstractPointer;
+import dev.codex.java.wrapper.type.MemoryAddress;
 
 public class InterfaceRequest extends AbstractPointer {
     public static final int NAME_SIZE = 16;
@@ -8,11 +9,11 @@ public class InterfaceRequest extends AbstractPointer {
     private byte[] name;
     private short flags;
 
-    InterfaceRequest(Long address, long size) {
+    InterfaceRequest(MemoryAddress address, long size) {
         this(address, size, new byte[InterfaceRequest.NAME_SIZE]);
     }
 
-    InterfaceRequest(Long address, long size, byte[] name) {
+    InterfaceRequest(MemoryAddress address, long size, byte[] name) {
         super(address, size);
         this.name = name;
         this.flags = 0;

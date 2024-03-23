@@ -1,16 +1,16 @@
 package dev.codex.java.wrapper.type;
 
 public abstract class AbstractPointer implements Pointer {
-    protected final Long address;
+    protected final MemoryAddress address;
     protected long size;
 
-    protected AbstractPointer(Long address, long size) {
+    protected AbstractPointer(MemoryAddress address, long size) {
         this.address = address;
         this.size = size;
     }
 
     @Override
-    public Long address() {
+    public MemoryAddress address() {
         return this.address;
     }
 
@@ -26,6 +26,6 @@ public abstract class AbstractPointer implements Pointer {
 
     @Override
     public String toString() {
-        return Long.toHexString(this.address);
+        return Long.toHexString(this.address.value());
     }
 }

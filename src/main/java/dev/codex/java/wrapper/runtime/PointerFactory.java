@@ -2,29 +2,26 @@ package dev.codex.java.wrapper.runtime;
 
 import dev.codex.java.wrapper.exception.IllegalArgumentException;
 import dev.codex.java.wrapper.exception.InvalidPointerTypeException;
+import dev.codex.java.wrapper.type.MemoryAddress;
 import dev.codex.java.wrapper.type.Pointer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class PointerFactory {
-    private static final Long FILE_SIZE = 216L;
-    private static final Long FPOS_T_SIZE = 16L;
-    private static final Long STRUCT_IFREQ_SIZE = 40L;
-
     public static final Map<Class<?>, Long> sizes = new HashMap<>();
     static {
-        PointerFactory.sizes.put(FileStream.class, PointerFactory.FILE_SIZE);
-        PointerFactory.sizes.put(FileStream.Position.class, PointerFactory.FPOS_T_SIZE);
-        PointerFactory.sizes.put(InterfaceRequest.class, PointerFactory.STRUCT_IFREQ_SIZE);
+        PointerFactory.sizes.put(FileStream.class, 216L);
+        PointerFactory.sizes.put(FileStream.Position.class, 16L);
+        PointerFactory.sizes.put(InterfaceRequest.class, 40L);
     }
 
     @FunctionalInterface
-    public interface Constructor {
-        Pointer construct(Long address, long size);
+    private interface Constructor {
+        Pointer construct(MemoryAddress address, long size);
     }
 
-    public static final Map<Class<?>, Constructor> constructors = new HashMap<>();
+    private static final Map<Class<?>, Constructor> constructors = new HashMap<>();
     static {
         PointerFactory.constructors.put(FileStream.class, FileStream::new);
         PointerFactory.constructors.put(FileStream.Position.class, FileStream.Position::new);
@@ -38,30 +35,30 @@ public class PointerFactory {
     public static Long sizeof(Class<? extends Pointer> clazz) {
         Long size = PointerFactory.sizes.get(clazz);
         if (size == null) {
-            throw new InvalidPointerTypeException(clazz);
+            throw new InvalidPointerTypeException("clazz", clazz);
         }
 
         return size;
     }
 
-    static <T extends Pointer> PointerBuilder<T> instantiate(Class<T> clazz) throws InvalidPointerTypeException {
+    public static <T extends Pointer> PointerBuilder<T> instantiate(Class<T> clazz) throws InvalidPointerTypeException {
         return PointerFactory.instantiate(1, clazz);
     }
 
-    static <T extends Pointer> PointerBuilder<T> instantiate(long n, Class<T> clazz) throws InvalidPointerTypeException {
-        return new PointerBuilder<>(clazz, n);
+    public static <T extends Pointer> PointerBuilder<T> instantiate(long n, Class<T> clazz) throws InvalidPointerTypeException {
+        return new PointerBuilder<>(n, clazz);
     }
 
     public static class PointerBuilder<T extends Pointer> {
         private final Class<T> clazz;
         private final Constructor constructor;
-        private Long address;
+        private MemoryAddress address;
         private long size;
 
-        private PointerBuilder(Class<T> clazz, long n) {
+        private PointerBuilder(long n, Class<T> clazz) {
             Constructor constructor = PointerFactory.constructors.get(clazz);
             if (constructor == null) {
-                throw new InvalidPointerTypeException(clazz);
+                throw new InvalidPointerTypeException("clazz", clazz);
             }
 
             this.clazz = clazz;
@@ -73,12 +70,13 @@ public class PointerFactory {
             this.size = PointerFactory.sizeof(clazz) * n;
         }
 
-        public PointerBuilder<T> at(Long address) {
+        public PointerBuilder<T> with(MemoryAddress address) {
             this.address = address;
             return this;
         }
 
-        public PointerBuilder<T> with(long size) {
+        public PointerBuilder<T> with(MemoryAddress address, long size) {
+            this.address = address;
             if (size <= 0) {
                 throw new IllegalArgumentException("size", "cannot be less than or equal to 0");
             }

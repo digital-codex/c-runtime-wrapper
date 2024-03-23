@@ -2,7 +2,6 @@ package dev.codex.java.wrapper.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public final class AccessAssociation {
     public static final AccessAssociation READ = new AccessAssociation(AccessFlag.READ_ONLY);
@@ -29,11 +28,14 @@ public final class AccessAssociation {
     private AccessAssociation(AccessFlag mode, OptionFlag... options) {
         this.mode = mode;
         this.options = options;
-        this.value = this.mode.value() | OptionFlag.of(this.options);
+        this.value = OptionFlag.valueOf(this.options);
     }
 
-    public boolean contains(OptionFlag o) {
-        return (this.value & o.value()) != 0;
+    public boolean contains(AccessFlag mode) {
+        return this.mode.value() == AccessFlag.READ_WRITE.value() || this.mode.value() == mode.value();
+    }
+    public boolean contains(OptionFlag option) {
+        return (this.value & option.value()) != 0;
     }
 
     public AccessFlag mode() {
@@ -60,7 +62,7 @@ public final class AccessAssociation {
         if (o == this) return true;
         if (!(o instanceof AccessAssociation that)) return false;
 
-        if (this.mode.value() != that.mode.value()) return false;
+        if (!this.contains(that.mode)) return false;
         for (OptionFlag option : that.options) {
             if (!this.contains(option)) return false;
         }

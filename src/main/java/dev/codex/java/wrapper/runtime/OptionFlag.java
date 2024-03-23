@@ -23,7 +23,7 @@ public final class OptionFlag {
         this.value = value;
     }
 
-    public static int of(OptionFlag ...flags) {
+    public static int valueOf(OptionFlag ...flags) {
         int value = 0;
         for (OptionFlag flag : flags)
             value = value | flag.value();
