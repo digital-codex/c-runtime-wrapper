@@ -32,7 +32,7 @@ public final class AccessAssociation {
     }
 
     public boolean contains(AccessFlag mode) {
-        return this.mode.value() == AccessFlag.READ_WRITE.value() || this.mode.value() == mode.value();
+        return this.mode == AccessFlag.READ_WRITE || this.mode == mode;
     }
     public boolean contains(OptionFlag option) {
         return (this.value & option.value()) != 0;
@@ -50,7 +50,7 @@ public final class AccessAssociation {
     public int hashCode() {
         final int PRIME = 31;
         int result = 1;
-        result += PRIME * this.mode.value();
+        result += PRIME * this.mode.ordinal();
         for (OptionFlag option : this.options) {
             result += PRIME * option.value();
         }

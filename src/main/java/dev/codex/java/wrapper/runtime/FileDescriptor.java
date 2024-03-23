@@ -9,7 +9,7 @@ public class FileDescriptor {
 
     FileDescriptor(int fd, AccessFlag mode, OptionFlag... options) {
         if (fd <= 0) {
-            throw new IllegalArgumentException("fd", "cannot be less than or equal to zero");
+            throw new IllegalArgumentException("fd", "cannot be less than or equal to 0");
         }
 
         this.fd = fd;

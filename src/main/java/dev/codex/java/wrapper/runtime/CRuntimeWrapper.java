@@ -1,5 +1,6 @@
 package dev.codex.java.wrapper.runtime;
 
+import dev.codex.java.wrapper.exception.IllegalArgumentException;
 import dev.codex.java.wrapper.type.MemoryAddress;
 import dev.codex.java.wrapper.type.Pointer;
 import dev.codex.java.wrapper.type.Error;
@@ -108,17 +109,24 @@ public final class CRuntimeWrapper {
         }
     }
 
-    //TODO: validation on size <= ptr.length
-    public static long fread(byte[] ptr, long size, long nmemb, FileStream stream) throws Error {
-        long n = StandardIO.fread(ptr, size, nmemb, stream.address().value());
+    public static long fread(byte[] buf, long size, long nmemb, FileStream stream) throws Error {
+        if (size >= buf.length) {
+            throw new IllegalArgumentException("size", "cannot be greater than or equal to `buf` length");
+        }
+
+        long n = StandardIO.fread(buf, size, nmemb, stream.address().value());
         if (n < 0) {
             throw CRuntimeWrapper.perror("fread");
         }
         return n;
     }
 
-    public static long fwrite(byte[] ptr, long size, long nmemb, FileStream stream) throws Error {
-        long n = StandardIO.fwrite(ptr, size, nmemb, stream.address().value());
+    public static long fwrite(byte[] buf, long size, long nmemb, FileStream stream) throws Error {
+        if (size >= buf.length) {
+            throw new IllegalArgumentException("size", "cannot be greater than or equal to `buf` length");
+        }
+
+        long n = StandardIO.fwrite(buf, size, nmemb, stream.address().value());
         if (n < 0) {
             throw CRuntimeWrapper.perror("fwrite");
         }
@@ -139,7 +147,7 @@ public final class CRuntimeWrapper {
         return pos;
     }
 
-    public static void rewind(FileStream stream) {
+    public static void rewind(FileStream stream) throws Error {
         CRuntimeWrapper.fseek(stream, 0, Whence.SEEK_SET);
     }
 
@@ -149,7 +157,7 @@ public final class CRuntimeWrapper {
         }
     }
 
-    public static void fsetpos(FileStream stream, FileStream.Position pos) {
+    public static void fsetpos(FileStream stream, FileStream.Position pos) throws Error {
         if (StandardIO.fsetpos(stream.address().value(), pos.address().value()) < 0) {
             throw CRuntimeWrapper.perror("fsetpos");
         }
@@ -160,7 +168,7 @@ public final class CRuntimeWrapper {
     }
 
     public static FileDescriptor open(String pathname, AccessFlag mode, OptionFlag...flags) throws Error {
-        int fd = FileControl.open(pathname, OptionFlag.valueOf(flags) | mode.value());
+        int fd = FileControl.open(pathname, OptionFlag.valueOf(flags) | mode.ordinal());
         if (fd < 0) {
             throw CRuntimeWrapper.perror("open");
         }
@@ -181,7 +189,7 @@ public final class CRuntimeWrapper {
     }
 
     public static FileDescriptor openat(FileDescriptor dirfd, String pathname, AccessFlag mode, OptionFlag... flags) throws Error {
-        int fd = FileControl.openat(dirfd.fd(), pathname, OptionFlag.valueOf(flags) | mode.value());
+        int fd = FileControl.openat(dirfd.fd(), pathname, OptionFlag.valueOf(flags) | mode.ordinal());
         if (fd < 0) {
             throw CRuntimeWrapper.perror("openat");
         }
