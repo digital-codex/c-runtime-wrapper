@@ -57,7 +57,7 @@ public class InterfaceRequest extends AbstractPointer {
 
     public void setName(byte[] name) {
         if (name.length >= InterfaceRequest.NAME_SIZE) {
-            throw new InvalidBufferLengthException("name", InterfaceRequest.NAME_SIZE);
+            throw new InvalidBufferLengthException("name", "greater than or equal to " + InterfaceRequest.NAME_SIZE);
         }
 
         this.name = name;

@@ -1,6 +1,7 @@
 package dev.codex.java.wrapper.runtime;
 
 import dev.codex.java.wrapper.exception.IllegalArgumentException;
+import dev.codex.java.wrapper.exception.InvalidBufferLengthException;
 import dev.codex.java.wrapper.type.MemoryAddress;
 import dev.codex.java.wrapper.type.Pointer;
 import dev.codex.java.wrapper.type.Error;
@@ -105,24 +106,20 @@ public final class CRuntimeWrapper {
         }
     }
 
-    public static long fread(byte[] buf, long size, long nmemb, FileStream stream) throws Error {
-        if (size > buf.length) {
-            throw new IllegalArgumentException("size", "cannot be greater than `buf` length");
-        }
+    public static long fread(byte[] ptr, long size, long nmemb, FileStream stream) throws Error {
+        validateBufferLength(size, ptr.length, "size", "greater than `ptr` length");
 
-        long n = StandardIO.fread(buf, size, nmemb, stream.address().value());
+        long n = StandardIO.fread(ptr, size, nmemb, stream.address().value());
         if (n < 0) {
             throw CRuntimeWrapper.perror("fread");
         }
         return n;
     }
 
-    public static long fwrite(byte[] buf, long size, long nmemb, FileStream stream) throws Error {
-        if (size > buf.length) {
-            throw new IllegalArgumentException("size", "cannot be greater than `buf` length");
-        }
+    public static long fwrite(byte[] ptr, long size, long nmemb, FileStream stream) throws Error {
+        validateBufferLength(size, ptr.length, "size", "greater than `ptr` length");
 
-        long n = StandardIO.fwrite(buf, size, nmemb, stream.address().value());
+        long n = StandardIO.fwrite(ptr, size, nmemb, stream.address().value());
         if (n < 0) {
             throw CRuntimeWrapper.perror("fwrite");
         }
@@ -198,6 +195,26 @@ public final class CRuntimeWrapper {
         }
     }
 
+    public static long read(FileDescriptor fd, byte[] buf, long count) throws Error {
+        validateBufferLength(count, buf.length, "count", "greater than `buf` length");
+
+        long n = UnixStandard.read(fd.fd(), buf, count);
+        if (n < 0) {
+            throw CRuntimeWrapper.perror("read");
+        }
+        return n;
+    }
+
+    public static long write(FileDescriptor fd, byte[] buf, long count) throws Error {
+        validateBufferLength(count, buf.length, "count", "greater than `buf` length");
+
+        long n = UnixStandard.write(fd.fd(), buf, count);
+        if (n < 0) {
+            throw CRuntimeWrapper.perror("write");
+        }
+        return n;
+    }
+
     public static Error perror(String s) {
         String msg = new String(Strings.strerror());
         if (s != null && !s.equals("\0")) {
@@ -205,5 +222,11 @@ public final class CRuntimeWrapper {
             return new Error(msg);
         }
         return new Error(msg);
+    }
+
+    private static void validateBufferLength(long expected, long actual, String arg, String msg) {
+        if (expected > actual) {
+            throw new InvalidBufferLengthException(arg, msg);
+        }
     }
 }
