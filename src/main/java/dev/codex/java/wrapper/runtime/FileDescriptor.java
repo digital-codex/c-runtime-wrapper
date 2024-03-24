@@ -1,22 +1,22 @@
 package dev.codex.java.wrapper.runtime;
 
 import dev.codex.java.wrapper.exception.IllegalArgumentException;
+import dev.codex.java.wrapper.type.FlagSet;
 
 import java.util.Objects;
 
 public class FileDescriptor {
     private final int fd;
     private final AccessFlag mode;
-    private final OptionFlagMask options;
+    private final FlagSet<OptionFlag> options;
 
     FileDescriptor(int fd, AccessFlag mode, OptionFlag... options) {
         if (fd <= 0) {
             throw new IllegalArgumentException("fd", "cannot be less than or equal to 0");
         }
 
-        this.fd = fd;
-        this.mode = mode;
-        this.options = new OptionFlagMask(options);
+        this.fd = fd; this.mode = mode;
+        this.options = new FlagSet<>(OptionFlag.class, options);
     }
 
     public int fd() {
@@ -27,7 +27,7 @@ public class FileDescriptor {
         return this.mode;
     }
 
-    public OptionFlagMask options() {
+    public FlagSet<OptionFlag> options() {
         return this.options;
     }
 

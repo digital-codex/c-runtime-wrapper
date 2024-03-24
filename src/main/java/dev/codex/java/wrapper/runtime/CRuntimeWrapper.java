@@ -1,7 +1,7 @@
 package dev.codex.java.wrapper.runtime;
 
-import dev.codex.java.wrapper.exception.IllegalArgumentException;
 import dev.codex.java.wrapper.exception.InvalidBufferLengthException;
+import dev.codex.java.wrapper.type.FlagSet;
 import dev.codex.java.wrapper.type.MemoryAddress;
 import dev.codex.java.wrapper.type.Pointer;
 import dev.codex.java.wrapper.type.Error;
@@ -161,7 +161,7 @@ public final class CRuntimeWrapper {
     }
 
     public static FileDescriptor open(String pathname, AccessFlag mode, OptionFlag...flags) throws Error {
-        int fd = FileControl.open(pathname, OptionFlagMask.valueOf(flags) | mode.value());
+        int fd = FileControl.open(pathname, FlagSet.valueOf(flags) | mode.value());
         if (fd < 0) {
             throw CRuntimeWrapper.perror("open");
         }
@@ -182,7 +182,7 @@ public final class CRuntimeWrapper {
     }
 
     public static FileDescriptor openat(FileDescriptor dirfd, String pathname, AccessFlag mode, OptionFlag... flags) throws Error {
-        int fd = FileControl.openat(dirfd.fd(), pathname, OptionFlagMask.valueOf(flags) | mode.value());
+        int fd = FileControl.openat(dirfd.fd(), pathname, FlagSet.valueOf(flags) | mode.value());
         if (fd < 0) {
             throw CRuntimeWrapper.perror("openat");
         }
@@ -213,6 +213,10 @@ public final class CRuntimeWrapper {
             throw CRuntimeWrapper.perror("write");
         }
         return n;
+    }
+
+    public static int ioctl(FileDescriptor fd, RequestCode code, InterfaceRequest request) throws Error {
+        return 0;
     }
 
     public static Error perror(String s) {

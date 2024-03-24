@@ -1,5 +1,7 @@
 package dev.codex.java.wrapper.runtime;
 
+import dev.codex.java.wrapper.type.FlagSet;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +15,7 @@ public final class AccessAssociation {
     public static final AccessAssociation WRITE_PLUS = new AccessAssociation(AccessFlag.READ_WRITE, OptionFlag.CREAT, OptionFlag.TRUNCATE);
     public static final AccessAssociation APPEND_PLUS = new AccessAssociation(AccessFlag.READ_WRITE, OptionFlag.CREAT, OptionFlag.APPEND);
 
-    static final Map<AccessMode, AccessAssociation> associations = new HashMap<>();
+    public static final Map<AccessMode, AccessAssociation> associations = new HashMap<>();
     static {
         associations.put(AccessMode.READ, AccessAssociation.READ);
         associations.put(AccessMode.WRITE, AccessAssociation.WRITE);
@@ -32,11 +34,11 @@ public final class AccessAssociation {
     }
 
     public boolean validateMode(AccessFlag mode) {
-        return this.mode == AccessFlag.READ_WRITE || this.mode == mode;
+        return AccessFlag.READ_WRITE.equals(this.mode) || Objects.equals(mode, this.mode);
     }
 
-    public boolean validateFlags(OptionFlagMask options) {
-        return options.containsAll(this.flags);
+    public boolean validateFlags(FlagSet<OptionFlag> options) {
+        return options.containsAll(Arrays.asList(this.flags));
     }
 
     @Override
