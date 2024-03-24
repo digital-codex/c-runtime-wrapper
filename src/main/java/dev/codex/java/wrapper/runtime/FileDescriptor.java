@@ -7,7 +7,7 @@ import java.util.Objects;
 public class FileDescriptor {
     private final int fd;
     private final AccessFlag mode;
-    private final OptionFlags options;
+    private final OptionFlagMask options;
 
     FileDescriptor(int fd, AccessFlag mode, OptionFlag... options) {
         if (fd <= 0) {
@@ -16,7 +16,7 @@ public class FileDescriptor {
 
         this.fd = fd;
         this.mode = mode;
-        this.options = new OptionFlags(options);
+        this.options = new OptionFlagMask(options);
     }
 
     public int fd() {
@@ -27,7 +27,7 @@ public class FileDescriptor {
         return this.mode;
     }
 
-    public OptionFlags options() {
+    public OptionFlagMask options() {
         return this.options;
     }
 

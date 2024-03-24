@@ -6,11 +6,26 @@ import dev.codex.java.wrapper.type.MemoryAddress;
 
 public class InterfaceRequest extends AbstractPointer {
     public enum InterfaceFlag {
-        UP(), BROADCAST(), DEBUG(), LOOP_BACK(), POINT_TO_POINT(), NO_TRAILERS(),
-        RUNNING(), NO_ARP(), PROMISCUOUS(), ALL_MULTICAST(), MASTER(), SLAVE(),
-        MULTICAST(), PORT_SELECT(), AUTO_MEDIA(), DYNAMIC(),
+        UP(),
+        BROADCAST(),
+        DEBUG(),
+        LOOP_BACK(),
+        POINT_TO_POINT(),
+        NO_TRAILERS(),
+        RUNNING(),
+        NO_ARP(),
+        PROMISCUOUS(),
+        ALL_MULTICAST(),
+        MASTER(),
+        SLAVE(),
+        MULTICAST(),
+        PORT_SELECT(),
+        AUTO_MEDIA(),
+        DYNAMIC(),
 
-        LOWER_UP(), DORMANT(), ECHO();
+        LOWER_UP(),
+        DORMANT(),
+        ECHO();
 
         private final int value;
         InterfaceFlag() {

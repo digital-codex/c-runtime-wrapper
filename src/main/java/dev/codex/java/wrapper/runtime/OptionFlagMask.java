@@ -1,13 +1,13 @@
 package dev.codex.java.wrapper.runtime;
 
-public final class OptionFlags {
+public final class OptionFlagMask {
     private int value;
 
-    public OptionFlags() {
+    public OptionFlagMask() {
         this.value = 0;
     }
 
-    public OptionFlags(OptionFlag... flags) {
+    public OptionFlagMask(OptionFlag... flags) {
         for (OptionFlag flag : flags) {
             this.value = this.value | flag.value();
         }
@@ -15,9 +15,9 @@ public final class OptionFlags {
 
     public static int valueOf(OptionFlag ...flags) {
         int value = 0;
-        for (OptionFlag flag : flags)
+        for (OptionFlag flag : flags) {
             value = value | flag.value();
-
+        }
         return value;
     }
 
@@ -47,7 +47,7 @@ public final class OptionFlags {
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (!(o instanceof OptionFlags that)) return false;
+        if (!(o instanceof OptionFlagMask that)) return false;
         return this.value == that.value;
     }
 

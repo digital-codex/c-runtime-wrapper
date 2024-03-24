@@ -31,19 +31,12 @@ public final class AccessAssociation {
         this.flags = flags;
     }
 
-    public boolean contains(AccessFlag mode) {
+    public boolean validateMode(AccessFlag mode) {
         return this.mode == AccessFlag.READ_WRITE || this.mode == mode;
     }
-    public boolean contains(OptionFlags options) {
+
+    public boolean validateFlags(OptionFlagMask options) {
         return options.containsAll(this.flags);
-    }
-
-    public AccessFlag mode() {
-        return this.mode;
-    }
-
-    public OptionFlag[] flags() {
-        return this.flags;
     }
 
     @Override
