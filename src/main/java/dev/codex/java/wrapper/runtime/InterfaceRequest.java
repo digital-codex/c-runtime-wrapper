@@ -5,37 +5,42 @@ import dev.codex.java.wrapper.type.AbstractPointer;
 import dev.codex.java.wrapper.type.MemoryAddress;
 
 public class InterfaceRequest extends AbstractPointer {
-    public static final int NAME_SIZE = 16;
+    public enum InterfaceFlag {
+        UP(), BROADCAST(), DEBUG(), LOOP_BACK(), POINT_TO_POINT(), NO_TRAILERS(),
+        RUNNING(), NO_ARP(), PROMISCUOUS(), ALL_MULTICAST(), MASTER(), SLAVE(),
+        MULTICAST(), PORT_SELECT(), AUTO_MEDIA(), DYNAMIC(),
 
-    private char[] name;
-    private InterfaceFlag flags;
+        LOWER_UP(), DORMANT(), ECHO();
 
-    InterfaceRequest(MemoryAddress address, long size) {
-        this(address, size, new char[InterfaceRequest.NAME_SIZE]);
-    }
-
-    InterfaceRequest(MemoryAddress address, long size, char[] name) {
-        super(address, size);
-        this.name = name;
-        this.flags = null;
-    }
-
-    public static class InterfaceFlag {
-
-        private final short value;
+        private final int value;
         InterfaceFlag() {
-            this.value = 0;
+            this.value = 1 << this.ordinal();
         }
-        public short value() {
+        public int value() {
             return this.value;
         }
     }
 
-    public char[] getName() {
+    public static final int NAME_SIZE = 16;
+
+    private byte[] name;
+    private int flags;
+
+    InterfaceRequest(MemoryAddress address, long size) {
+        this(address, size, new byte[InterfaceRequest.NAME_SIZE]);
+    }
+
+    InterfaceRequest(MemoryAddress address, long size, byte[] name) {
+        super(address, size);
+        this.name = name;
+        this.flags = 0;
+    }
+
+    public byte[] getName() {
         return this.name;
     }
 
-    public void setName(char[] name) {
+    public void setName(byte[] name) {
         if (name.length >= InterfaceRequest.NAME_SIZE) {
             throw new InvalidBufferLengthException("name", InterfaceRequest.NAME_SIZE);
         }
@@ -43,11 +48,15 @@ public class InterfaceRequest extends AbstractPointer {
         this.name = name;
     }
 
-    public InterfaceFlag getFlags() {
-        return this.flags;
+    public short getFlags() {
+        return ((Integer) this.flags).shortValue();
     }
 
-    public void setFlags(InterfaceFlag flags) {
-        this.flags = flags;
+    public void addFlag(InterfaceFlag flag) {
+        this.flags = this.flags | flag.value();
+    }
+
+    public void removeFlag(InterfaceFlag flag) {
+        this.flags = this.flags & (~flag.value());
     }
 }

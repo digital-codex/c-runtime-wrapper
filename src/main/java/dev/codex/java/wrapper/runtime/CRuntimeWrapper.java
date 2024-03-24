@@ -80,14 +80,10 @@ public final class CRuntimeWrapper {
     public static FileStream fdopen(FileDescriptor fd, AccessMode mode) throws Error {
         AccessAssociation association = AccessAssociation.associations.getOrDefault(mode, AccessAssociation.READ);
 
-        if (!association.contains(fd.mode())) {
+        if (!association.contains(fd.mode()) || !association.contains(fd.options())) {
             throw Error.INCOMPATIBLE_ACCESS_ASSOCIATION;
         }
 
-        int value = OptionFlag.valueOf(fd.options());
-        for (OptionFlag option : association.options()) {
-            if ((value & option.value()) == 0) throw Error.INCOMPATIBLE_ACCESS_ASSOCIATION;
-        }
         MemoryAddress address = MemoryAddress.of(StandardIO.fdopen(fd.fd(), mode.value()));
         if (MemoryAddress.NULL.equals(address)) {
             throw CRuntimeWrapper.perror("fdopen");
@@ -110,8 +106,8 @@ public final class CRuntimeWrapper {
     }
 
     public static long fread(byte[] buf, long size, long nmemb, FileStream stream) throws Error {
-        if (size >= buf.length) {
-            throw new IllegalArgumentException("size", "cannot be greater than or equal to `buf` length");
+        if (size > buf.length) {
+            throw new IllegalArgumentException("size", "cannot be greater than `buf` length");
         }
 
         long n = StandardIO.fread(buf, size, nmemb, stream.address().value());
@@ -122,8 +118,8 @@ public final class CRuntimeWrapper {
     }
 
     public static long fwrite(byte[] buf, long size, long nmemb, FileStream stream) throws Error {
-        if (size >= buf.length) {
-            throw new IllegalArgumentException("size", "cannot be greater than or equal to `buf` length");
+        if (size > buf.length) {
+            throw new IllegalArgumentException("size", "cannot be greater than `buf` length");
         }
 
         long n = StandardIO.fwrite(buf, size, nmemb, stream.address().value());
@@ -168,7 +164,7 @@ public final class CRuntimeWrapper {
     }
 
     public static FileDescriptor open(String pathname, AccessFlag mode, OptionFlag...flags) throws Error {
-        int fd = FileControl.open(pathname, OptionFlag.valueOf(flags) | mode.ordinal());
+        int fd = FileControl.open(pathname, OptionFlags.valueOf(flags) | mode.ordinal());
         if (fd < 0) {
             throw CRuntimeWrapper.perror("open");
         }
@@ -189,7 +185,7 @@ public final class CRuntimeWrapper {
     }
 
     public static FileDescriptor openat(FileDescriptor dirfd, String pathname, AccessFlag mode, OptionFlag... flags) throws Error {
-        int fd = FileControl.openat(dirfd.fd(), pathname, OptionFlag.valueOf(flags) | mode.ordinal());
+        int fd = FileControl.openat(dirfd.fd(), pathname, OptionFlags.valueOf(flags) | mode.ordinal());
         if (fd < 0) {
             throw CRuntimeWrapper.perror("openat");
         }

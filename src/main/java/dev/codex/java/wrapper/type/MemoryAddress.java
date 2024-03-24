@@ -20,14 +20,14 @@ public final class MemoryAddress {
     }
 
     @Override
-    public int hashCode() {
-        return (int) (this.address ^ (this.address >>> 32));
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (!(o instanceof MemoryAddress that)) return false;
         return Objects.equals(this.address, that.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (this.address ^ (this.address >>> 32));
     }
 }

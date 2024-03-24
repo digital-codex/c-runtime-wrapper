@@ -1,7 +1,7 @@
 package dev.codex.java.wrapper.runtime;
 
 import dev.codex.java.wrapper.exception.IllegalArgumentException;
-import dev.codex.java.wrapper.exception.InvalidPointerTypeException;
+import dev.codex.java.wrapper.exception.InvalidClassTypeException;
 import dev.codex.java.wrapper.type.MemoryAddress;
 import dev.codex.java.wrapper.type.Pointer;
 
@@ -35,17 +35,17 @@ public class PointerFactory {
     public static Long sizeof(Class<? extends Pointer> clazz) {
         Long size = PointerFactory.sizes.get(clazz);
         if (size == null) {
-            throw new InvalidPointerTypeException("clazz", clazz);
+            throw new InvalidClassTypeException("clazz", clazz);
         }
 
         return size;
     }
 
-    public static <T extends Pointer> PointerBuilder<T> instantiate(Class<T> clazz) throws InvalidPointerTypeException {
+    public static <T extends Pointer> PointerBuilder<T> instantiate(Class<T> clazz) throws InvalidClassTypeException {
         return PointerFactory.instantiate(1, clazz);
     }
 
-    public static <T extends Pointer> PointerBuilder<T> instantiate(long n, Class<T> clazz) throws InvalidPointerTypeException {
+    public static <T extends Pointer> PointerBuilder<T> instantiate(long n, Class<T> clazz) throws InvalidClassTypeException {
         return new PointerBuilder<>(n, clazz);
     }
 
@@ -58,7 +58,7 @@ public class PointerFactory {
         private PointerBuilder(long n, Class<T> clazz) {
             Constructor constructor = PointerFactory.constructors.get(clazz);
             if (constructor == null) {
-                throw new InvalidPointerTypeException("clazz", clazz);
+                throw new InvalidClassTypeException("clazz", clazz);
             }
 
             this.clazz = clazz;

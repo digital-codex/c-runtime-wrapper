@@ -19,4 +19,16 @@ public final class AccessMode {
     public String value() {
         return this.value;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof AccessMode that)) return false;
+        return Objects.equals(this.value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.value.hashCode();
+    }
 }
