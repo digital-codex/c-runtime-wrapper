@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(
 		SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/src/main/c/CRuntimeWrapper.c
+		${CMAKE_CURRENT_SOURCE_DIR}/src/main/c/InterfaceRequest.c
 )
 
 set(

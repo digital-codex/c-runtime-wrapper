@@ -216,7 +216,11 @@ public final class CRuntimeWrapper {
     }
 
     public static int ioctl(FileDescriptor fd, RequestCode code, InterfaceRequest request) throws Error {
-        return 0;
+        int ret = IOControl.ioctl(fd.fd(), code.value(), request.address().value());
+        if (ret < 0) {
+            throw CRuntimeWrapper.perror("ioctl");
+        }
+        return ret;
     }
 
     public static Error perror(String s) {
@@ -226,6 +230,11 @@ public final class CRuntimeWrapper {
             return new Error(msg);
         }
         return new Error(msg);
+    }
+
+    private static native void initialize();
+    static {
+        CRuntimeWrapper.initialize();
     }
 
     private static void validateBufferLength(long expected, long actual, String arg, String msg) {
