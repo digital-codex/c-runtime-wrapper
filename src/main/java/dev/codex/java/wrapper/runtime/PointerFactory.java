@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PointerFactory {
-    public static final Map<Class<?>, Long> sizes = new HashMap<>();
+    private static final Map<Class<?>, Long> sizes = new HashMap<>();
     static {
         PointerFactory.sizes.put(FileStream.class, 216L);
         PointerFactory.sizes.put(FileStream.Position.class, 16L);
@@ -41,15 +41,15 @@ public class PointerFactory {
         return size;
     }
 
-    public static <T extends Pointer> PointerBuilder<T> instantiate(Class<T> clazz) throws InvalidClassTypeException {
+    static <T extends Pointer> PointerBuilder<T> instantiate(Class<T> clazz) throws InvalidClassTypeException {
         return PointerFactory.instantiate(1, clazz);
     }
 
-    public static <T extends Pointer> PointerBuilder<T> instantiate(long n, Class<T> clazz) throws InvalidClassTypeException {
+    static <T extends Pointer> PointerBuilder<T> instantiate(long n, Class<T> clazz) throws InvalidClassTypeException {
         return new PointerBuilder<>(n, clazz);
     }
 
-    public static class PointerBuilder<T extends Pointer> {
+    static class PointerBuilder<T extends Pointer> {
         private final Class<T> clazz;
         private final Constructor constructor;
         private MemoryAddress address;

@@ -160,6 +160,7 @@ public final class CRuntimeWrapper {
         return CRuntimeWrapper.open(pathname, AccessFlag.READ_ONLY, flags);
     }
 
+    // TODO: Set mode argument on O_CREAT being passed to flags
     public static FileDescriptor open(String pathname, AccessFlag mode, OptionFlag...flags) throws Error {
         int fd = FileControl.open(pathname, FlagSet.valueOf(flags) | mode.value());
         if (fd < 0) {
