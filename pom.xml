@@ -43,7 +43,6 @@
             <plugin>
                 <groupId>dev.codex.java.maven</groupId>
                 <artifactId>native-maven-plugin</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>default-native</id>
@@ -70,7 +69,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
                 <configuration>
                     <includes>
                         <include>**/*</include>
@@ -80,7 +78,6 @@
             <plugin>
                 <groupId>dev.codex.java.maven</groupId>
                 <artifactId>nar-maven-plugin</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>default-nar</id>
