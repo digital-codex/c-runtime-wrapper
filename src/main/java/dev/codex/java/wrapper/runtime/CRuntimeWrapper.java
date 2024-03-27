@@ -8,10 +8,8 @@ import dev.codex.java.wrapper.type.Error;
 
 import java.util.Objects;
 
+// TODO: rename to something like native-wrapper
 public final class CRuntimeWrapper {
-    static {
-        System.load("/home/treyvon/src/c-runtime-wrapper/target/library/libCRuntimeWrapper.so");
-    }
     private CRuntimeWrapper() {
         super();
     }
@@ -154,6 +152,10 @@ public final class CRuntimeWrapper {
         if (StandardIO.fsetpos(stream.address().value(), pos.address().value()) < 0) {
             throw CRuntimeWrapper.perror("fsetpos");
         }
+    }
+
+    public static void printf(String string) {
+        StandardIO.printf(string);
     }
 
     public static FileDescriptor open(String pathname, OptionFlag...flags) throws Error {

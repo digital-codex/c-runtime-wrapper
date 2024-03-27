@@ -20,4 +20,7 @@ final class StandardIO {
     static native long ftell(Long stream);
     static native int fgetpos(Long stream, Long pos);
     static native int fsetpos(Long stream, Long pos);
+
+    // TODO: rename to println
+    static native int printf(String format);
 }
