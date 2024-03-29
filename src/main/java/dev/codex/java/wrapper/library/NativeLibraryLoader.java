@@ -1,5 +1,6 @@
 package dev.codex.java.wrapper.library;
 
+import dev.codex.java.io.file.FileTreeWalker;
 import dev.codex.java.wrapper.exception.IllegalArgumentException;
 
 import java.io.IOException;
@@ -9,12 +10,25 @@ import java.net.URL;
 import java.nio.file.*;
 
 public class NativeLibraryLoader {
+    public static final String WORKSPACE = System.getProperty("user.dir");
+    public static final String LIBRARY_PATH
+            = System.getProperty("java.library.path");
+
     private NativeLibraryLoader() {
         super();
     }
 
-    // TODO: add java.library.path search
-    public static void load(Class<?> provider, String library) throws IOException {
+    public static void load(String directories, String library) {
+        FileTreeWalker.resolve(directories, library)
+                .ifSuccessOrElse(
+                        path -> System.load(path.toString()),
+                        () -> NativeLibraryLoader.load(
+                                NativeLibraryLoader.class, library
+                        )
+                );
+    }
+
+    public static void load(Class<?> provider, String library) {
         if (!library.startsWith("/")) {
             library = "/" + library;
         }
@@ -36,8 +50,8 @@ public class NativeLibraryLoader {
             fs.close();
 
             System.load(tmp.toString());
-        } catch (URISyntaxException e) {
-            throw new IOException(e);
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 }

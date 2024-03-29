@@ -1,14 +1,14 @@
 package dev.codex.java.wrapper.runtime;
 
+import dev.codex.java.wrapper.library.NativeLibraryLoader;
 import dev.codex.java.wrapper.type.Error;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CRuntimeWrapperTest {
-    // TODO: need a solution for absolute path here
     static {
-        System.load("/home/treyvon/src/c-runtime-wrapper/target/library/libCRuntimeWrapper.so");
+        NativeLibraryLoader.load(NativeLibraryLoader.WORKSPACE, "libCRuntimeWrapper.so");
     }
 
     public static final int MAGIC_NUMBER = 0x7f454c46;
