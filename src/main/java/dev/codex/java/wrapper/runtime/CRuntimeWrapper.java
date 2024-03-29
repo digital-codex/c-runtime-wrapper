@@ -154,8 +154,8 @@ public final class CRuntimeWrapper {
         }
     }
 
-    public static void printf(String string) {
-        StandardIO.printf(string);
+    public static void println(String string) {
+        StandardIO.println(string);
     }
 
     public static FileDescriptor open(String pathname, OptionFlag...flags) throws Error {

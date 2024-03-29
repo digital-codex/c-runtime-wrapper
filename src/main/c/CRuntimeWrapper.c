@@ -188,13 +188,13 @@ JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fsetpos(JN
 
 /*
  * Class:     dev_codex_java_wrapper_runtime_StandardIO
- * Method:    printf
- * Signature: (Ljava/lang/String;)I
+ * Method:    println
+ * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_printf(JNIEnv *env, jclass clazz, jstring j_string) {
-    const char* string = (*env)->GetStringUTFChars(env, j_string, NULL);
-    printf("%s\n", string);
-    (*env)->ReleaseStringUTFChars(env, j_string, string);
+JNIEXPORT void JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_println(JNIEnv *env, jclass clazz, jstring j_out) {
+    const char* out = (*env)->GetStringUTFChars(env, j_out, NULL);
+    printf("%s\n", out);
+    (*env)->ReleaseStringUTFChars(env, j_out, out);
 }
 
 /*
