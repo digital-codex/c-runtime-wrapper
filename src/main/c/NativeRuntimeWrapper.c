@@ -1,9 +1,10 @@
-#include <dev_codex_java_wrapper_runtime_NativeRuntimeWrapper.h>
-#include <dev_codex_java_wrapper_runtime_FileControl.h>
-#include <dev_codex_java_wrapper_runtime_StandardIO.h>
-#include <dev_codex_java_wrapper_runtime_StandardLibrary.h>
-#include <dev_codex_java_wrapper_runtime_Strings.h>
-#include <dev_codex_java_wrapper_runtime_UnixStandard.h>
+#include <dev_codex_java_runtime_unix_FileControl.h>
+#include <dev_codex_java_runtime_unix_IOControl.h>
+#include <dev_codex_java_runtime_unix_NativeRuntimeWrapper.h>
+#include <dev_codex_java_runtime_unix_StandardIO.h>
+#include <dev_codex_java_runtime_unix_StandardLibrary.h>
+#include <dev_codex_java_runtime_unix_Strings.h>
+#include <dev_codex_java_runtime_unix_UnixStandard.h>
 
 #include <errno.h>
 #include <sys/ioctl.h>
@@ -23,51 +24,64 @@ extern "C" {
 #endif
 
 static jclass long_clazz;
+
 static jmethodID valueOf;
 static jmethodID longValue;
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardLibrary
- * Method:    malloc
- * Signature: (J)Ljava/lang/Long;
+ * Class:     dev_codex_java_runtime_unix_FileControl
+ * Method:    open
+ * Signature: (Ljava/lang/String;I)I
  */
-JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardLibrary_malloc(JNIEnv *env, jclass clazz, jlong j_size) {
-    return (*env)->CallStaticObjectMethod(env, long_clazz, valueOf, (jlong) malloc((size_t) j_size));
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_FileControl_open(JNIEnv *env, jclass clazz, jstring j_pathname, jint j_flags) {
+    int fd = -1;
+
+    const char* pathname = (*env)->GetStringUTFChars(env, j_pathname, NULL);
+    fd = open(pathname, (int) j_flags);
+    (*env)->ReleaseStringUTFChars(env, j_pathname, pathname);
+
+    return (jint) fd;
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardLibrary
- * Method:    free
- * Signature: (Ljava/lang/Long;)V
+ * Class:     dev_codex_java_runtime_unix_FileControl
+ * Method:    openat
+ * Signature: (ILjava/lang/String;I)I
  */
-JNIEXPORT void JNICALL Java_dev_codex_java_wrapper_runtime_StandardLibrary_free(JNIEnv *env, jclass clazz, jobject j_ptr) {
-    free((void*) (*env)->CallObjectMethod(env, j_ptr, longValue));
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_FileControl_openat(JNIEnv *env, jclass clazz, jint j_dirfd, jstring j_pathname, jint j_flags) {
+    int fd = -1;
+
+    const char* pathname = (*env)->GetStringUTFChars(env, j_pathname, NULL);
+    fd = openat((int) j_dirfd, pathname, (int) j_flags);
+    (*env)->ReleaseStringUTFChars(env, j_pathname, pathname);
+
+    return (jint) fd;
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardLibrary
- * Method:    calloc
- * Signature: (JJ)Ljava/lang/Long;
+ * Class:     dev_codex_java_runtime_unix_IOControl
+ * Method:    ioctl
+ * Signature: (IJLjava/lang/Long;)I
  */
-JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardLibrary_calloc(JNIEnv *env, jclass clazz, jlong j_nmemb, jlong j_size) {
-    return (*env)->CallStaticObjectMethod(env, long_clazz, valueOf, (jlong) calloc((size_t) j_nmemb, (size_t) j_size));
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_IOControl_ioctl(JNIEnv *env, jclass clazz, jint j_fd, jlong j_code, jobject j_request) {
+    return (jint) ioctl((int) j_fd, (unsigned long) j_code, (struct ifreq*) (*env)->CallObjectMethod(env, j_request, longValue));
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardLibrary
- * Method:    realloc
- * Signature: (Ljava/lang/Long;J)Ljava/lang/Long;
+ * Class:     dev_codex_java_runtime_unix_StandardIO
+ * Method:    fclose
+ * Signature: (Ljava/lang/Long;)I
  */
-JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardLibrary_realloc(JNIEnv *env, jclass clazz, jobject j_ptr, jlong j_size) {
-    return (*env)->CallStaticObjectMethod(env, long_clazz, valueOf, (jlong) realloc((void*) (*env)->CallObjectMethod(env, j_ptr, longValue), (size_t) j_size));
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fclose(JNIEnv *env, jclass clazz, jobject j_stream) {
+    return (jint) fclose((FILE*) (*env)->CallObjectMethod(env, j_stream, longValue));
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    fopen
  * Signature: (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Long;
  */
-JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fopen(JNIEnv *env, jclass clazz, jstring j_pathname, jstring j_mode) {
+JNIEXPORT jobject JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fopen(JNIEnv *env, jclass clazz, jstring j_pathname, jstring j_mode) {
     FILE* fp = NULL;
 
     const char* pathname = (*env)->GetStringUTFChars(env, j_pathname, NULL);
@@ -80,11 +94,11 @@ JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fopen(J
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    fdopen
  * Signature: (ILjava/lang/String;)Ljava/lang/Long;
  */
-JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fdopen(JNIEnv *env, jclass clazz, jint j_fd, jstring j_mode) {
+JNIEXPORT jobject JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fdopen(JNIEnv *env, jclass clazz, jint j_fd, jstring j_mode) {
     FILE* fp = NULL;
 
     const char* mode = (*env)->GetStringUTFChars(env, j_mode, NULL);
@@ -95,11 +109,11 @@ JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fdopen(
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    freopen
  * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Long;)Ljava/lang/Long;
  */
-JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_freopen(JNIEnv *env, jclass clazz, jstring j_pathname, jstring j_mode, jobject j_stream) {
+JNIEXPORT jobject JNICALL Java_dev_codex_java_runtime_unix_StandardIO_freopen(JNIEnv *env, jclass clazz, jstring j_pathname, jstring j_mode, jobject j_stream) {
     FILE* fp = NULL;
 
     const char* pathname = (*env)->GetStringUTFChars(env, j_pathname, NULL);
@@ -113,20 +127,11 @@ JNIEXPORT jobject JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_freopen
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
- * Method:    fclose
- * Signature: (Ljava/lang/Long;)I
- */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fclose(JNIEnv *env, jclass clazz, jobject j_stream) {
-    return (jint) fclose((FILE*) (*env)->CallObjectMethod(env, j_stream, longValue));
-}
-
-/*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    fread
  * Signature: ([BJJLjava/lang/Long;)J
  */
-JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fread(JNIEnv *env, jclass clazz, jbyteArray j_ptr, jlong j_size, jlong j_nmemb, jobject j_stream) {
+JNIEXPORT jlong JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fread(JNIEnv *env, jclass clazz, jbyteArray j_ptr, jlong j_size, jlong j_nmemb, jobject j_stream) {
     int len = (int) (*env)->GetArrayLength(env, (jarray) j_ptr);
     char ptr[len];
     memset(ptr, 0, sizeof(char) * len);
@@ -137,11 +142,11 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fread(JNI
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    fwrite
  * Signature: ([BJJLjava/lang/Long;)J
  */
-JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fwrite(JNIEnv *env, jclass clazz, jbyteArray j_ptr, jlong j_size, jlong j_nmemb, jobject j_stream) {
+JNIEXPORT jlong JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fwrite(JNIEnv *env, jclass clazz, jbyteArray j_ptr, jlong j_size, jlong j_nmemb, jobject j_stream) {
     int len = (int) (*env)->GetArrayLength(env, (jarray) j_ptr);
     char ptr[len];
     memset(ptr, 0, sizeof(char) * len);
@@ -151,97 +156,118 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fwrite(JN
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    fseek
  * Signature: (Ljava/lang/Long;JI)I
  */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fseek(JNIEnv *env, jclass clazz, jobject j_stream, jlong j_offset, jint j_whence) {
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fseek(JNIEnv *env, jclass clazz, jobject j_stream, jlong j_offset, jint j_whence) {
     return (jint) fseek((FILE*) (*env)->CallObjectMethod(env, j_stream, longValue), (long) j_offset, (int) j_whence);
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    ftell
  * Signature: (Ljava/lang/Long;)J
  */
-JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_ftell(JNIEnv *env, jclass clazz, jobject j_stream) {
+JNIEXPORT jlong JNICALL Java_dev_codex_java_runtime_unix_StandardIO_ftell(JNIEnv *env, jclass clazz, jobject j_stream) {
     return (jlong) ftell((FILE*) (*env)->CallObjectMethod(env, j_stream, longValue));
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    fgetpos
  * Signature: (Ljava/lang/Long;Ljava/lang/Long;)I
  */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fgetpos(JNIEnv *env, jclass clazz, jobject j_stream, jobject j_pos) {
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fgetpos(JNIEnv *env, jclass clazz, jobject j_stream, jobject j_pos) {
     return (jint) fgetpos((FILE*) (*env)->CallObjectMethod(env, j_stream, longValue), (fpos_t*) (*env)->CallObjectMethod(env, j_pos, longValue));
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
+ * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    fsetpos
  * Signature: (Ljava/lang/Long;Ljava/lang/Long;)I
  */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_fsetpos(JNIEnv *env, jclass clazz, jobject j_stream, jobject j_pos) {
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fsetpos(JNIEnv *env, jclass clazz, jobject j_stream, jobject j_pos) {
     return (jint) fgetpos((FILE*) (*env)->CallObjectMethod(env, j_stream, longValue), (fpos_t*) (*env)->CallObjectMethod(env, j_pos, longValue));
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_StandardIO
- * Method:    println
+ * Class:     dev_codex_java_runtime_unix_StandardIO
+ * Method:    printf
  * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_dev_codex_java_wrapper_runtime_StandardIO_println(JNIEnv *env, jclass clazz, jstring j_out) {
+JNIEXPORT void JNICALL Java_dev_codex_java_runtime_unix_StandardIO_printf(JNIEnv *env, jclass clazz, jstring j_out) {
     const char* out = (*env)->GetStringUTFChars(env, j_out, NULL);
     printf("%s\n", out);
     (*env)->ReleaseStringUTFChars(env, j_out, out);
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_FileControl
- * Method:    open
- * Signature: (Ljava/lang/String;I)I
+ * Class:     dev_codex_java_runtime_unix_StandardLibrary
+ * Method:    malloc
+ * Signature: (J)Ljava/lang/Long;
  */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_FileControl_open(JNIEnv *env, jclass clazz, jstring j_pathname, jint j_flags) {
-    int fd = -1;
-
-    const char* pathname = (*env)->GetStringUTFChars(env, j_pathname, NULL);
-    fd = open(pathname, (int) j_flags);
-    (*env)->ReleaseStringUTFChars(env, j_pathname, pathname);
-
-    return (jint) fd;
+JNIEXPORT jobject JNICALL Java_dev_codex_java_runtime_unix_StandardLibrary_malloc(JNIEnv *env, jclass clazz, jlong j_size) {
+    return (*env)->CallStaticObjectMethod(env, long_clazz, valueOf, (jlong) malloc((size_t) j_size));
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_FileControl
- * Method:    openat
- * Signature: (ILjava/lang/String;I)I
+ * Class:     dev_codex_java_runtime_unix_StandardLibrary
+ * Method:    free
+ * Signature: (Ljava/lang/Long;)V
  */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_FileControl_openat(JNIEnv *env, jclass clazz, jint j_dirfd, jstring j_pathname, jint j_flags) {
-    int fd = -1;
-
-    const char* pathname = (*env)->GetStringUTFChars(env, j_pathname, NULL);
-    fd = openat((int) j_dirfd, pathname, (int) j_flags);
-    (*env)->ReleaseStringUTFChars(env, j_pathname, pathname);
-
-    return (jint) fd;
+JNIEXPORT void JNICALL Java_dev_codex_java_runtime_unix_StandardLibrary_free(JNIEnv *env, jclass clazz, jobject j_ptr) {
+    free((void*) (*env)->CallObjectMethod(env, j_ptr, longValue));
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_UnixStandard
+ * Class:     dev_codex_java_runtime_unix_StandardLibrary
+ * Method:    calloc
+ * Signature: (JJ)Ljava/lang/Long;
+ */
+JNIEXPORT jobject JNICALL Java_dev_codex_java_runtime_unix_StandardLibrary_calloc(JNIEnv *env, jclass clazz, jlong j_nmemb, jlong j_size) {
+    return (*env)->CallStaticObjectMethod(env, long_clazz, valueOf, (jlong) calloc((size_t) j_nmemb, (size_t) j_size));
+}
+
+/*
+ * Class:     dev_codex_java_runtime_unix_StandardLibrary
+ * Method:    realloc
+ * Signature: (Ljava/lang/Long;J)Ljava/lang/Long;
+ */
+JNIEXPORT jobject JNICALL Java_dev_codex_java_runtime_unix_StandardLibrary_realloc(JNIEnv *env, jclass clazz, jobject j_ptr, jlong j_size) {
+    return (*env)->CallStaticObjectMethod(env, long_clazz, valueOf, (jlong) realloc((void*) (*env)->CallObjectMethod(env, j_ptr, longValue), (size_t) j_size));
+}
+
+/*
+ * Class:     dev_codex_java_runtime_unix_Strings
+ * Method:    strerror
+ * Signature: ()[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_dev_codex_java_runtime_unix_Strings_strerror(JNIEnv *env, jclass clazz) {
+    char* msg = strerror(errno);
+
+    int len = strlen(msg);
+    jbyteArray msg_array = (*env)->NewByteArray(env, len);
+    (*env)->SetByteArrayRegion(env, msg_array, 0, len, (const jbyte*) msg);
+
+    return msg_array;
+}
+
+/*
+ * Class:     dev_codex_java_runtime_unix_UnixStandard
  * Method:    close
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_UnixStandard_close(JNIEnv *env, jclass clazz, jint j_fd) {
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_UnixStandard_close(JNIEnv *env, jclass clazz, jint j_fd) {
     return (jint) close((int) j_fd);
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_UnixStandard
+ * Class:     dev_codex_java_runtime_unix_UnixStandard
  * Method:    read
  * Signature: (I[BJ)J
  */
-JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_UnixStandard_read(JNIEnv *env, jclass clazz, jint j_fd, jbyteArray j_buf, jlong j_count) {
+JNIEXPORT jlong JNICALL Java_dev_codex_java_runtime_unix_UnixStandard_read(JNIEnv *env, jclass clazz, jint j_fd, jbyteArray j_buf, jlong j_count) {
     int len = (int) (*env)->GetArrayLength(env, (jarray) j_buf);
     char buf[len];
     memset(buf, 0, sizeof(char) * len);
@@ -252,11 +278,11 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_UnixStandard_read(JN
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_UnixStandard
+ * Class:     dev_codex_java_runtime_unix_UnixStandard
  * Method:    write
  * Signature: (I[BJ)J
  */
-JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_UnixStandard_write(JNIEnv *env, jclass clazz, jint j_fd, jbyteArray j_buf, jlong j_count) {
+JNIEXPORT jlong JNICALL Java_dev_codex_java_runtime_unix_UnixStandard_write(JNIEnv *env, jclass clazz, jint j_fd, jbyteArray j_buf, jlong j_count) {
     int len = (int) (*env)->GetArrayLength(env, (jarray) j_buf);
     char buf[len];
     memset(buf, 0, sizeof(char) * len);
@@ -266,35 +292,11 @@ JNIEXPORT jlong JNICALL Java_dev_codex_java_wrapper_runtime_UnixStandard_write(J
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_IOControl
- * Method:    ioctl
- * Signature: (IJLjava/lang/Long;)I
- */
-JNIEXPORT jint JNICALL Java_dev_codex_java_wrapper_runtime_IOControl_ioctl(JNIEnv *env, jclass clazz, jint j_fd, jlong j_code, jobject j_request) {
-    return (jint) ioctl((int) j_fd, (unsigned long) j_code, (struct ifreq*) (*env)->CallObjectMethod(env, j_request, longValue));
-}
-
-/*
- * Class:     dev_codex_java_wrapper_runtime_Strings
- * Method:    strerror
- * Signature: ()[B
- */
-JNIEXPORT jbyteArray JNICALL Java_dev_codex_java_wrapper_runtime_Strings_strerror(JNIEnv *env, jclass clazz) {
-    char *msg = strerror(errno);
-
-    int len = strlen(msg);
-    jbyteArray msg_array = (*env)->NewByteArray(env, len);
-    (*env)->SetByteArrayRegion(env, msg_array, 0, len, (const jbyte*) msg);
-
-    return msg_array;
-}
-
-/*
- * Class:     dev_codex_java_wrapper_runtime_NativeRuntimeWrapper
+ * Class:     dev_codex_java_runtime_unix_NativeRuntimeWrapper
  * Method:    initialize
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_dev_codex_java_wrapper_runtime_NativeRuntimeWrapper_initialize(JNIEnv *env, jclass clazz) {
+JNIEXPORT void JNICALL Java_dev_codex_java_runtime_unix_NativeRuntimeWrapper_initialize(JNIEnv *env, jclass clazz) {
     long_clazz = (*env)->FindClass(env, "java/lang/Long");
     valueOf = (*env)->GetStaticMethodID(env, long_clazz, "valueOf", "(J)Ljava/lang/Long;");
     longValue = (*env)->GetMethodID(env, long_clazz, "longValue", "()J");
