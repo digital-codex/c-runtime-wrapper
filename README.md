@@ -1,1 +1,1 @@
-# c-runtime-wrapper
+# java-native-runtime-wrapper
