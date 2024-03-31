@@ -12,6 +12,7 @@ public class InterfaceRequest extends AbstractPointer {
 
     public static final int NAME_SIZE = 16;
 
+    // TODO: remove duplicate storage
     private byte[] name;
     private Integer flags;
 

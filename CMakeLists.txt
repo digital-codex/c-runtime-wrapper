@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.26)
-project(CRuntimeWrapper C)
+project(NativeRuntimeWrapper C)
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
 
 set(
 		SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/src/main/c/CRuntimeWrapper.c
+		${CMAKE_CURRENT_SOURCE_DIR}/src/main/c/NativeRuntimeWrapper.c
 		${CMAKE_CURRENT_SOURCE_DIR}/src/main/c/InterfaceRequest.c
 )
 
@@ -28,9 +28,9 @@ set(
 		${CMAKE_CURRENT_SOURCE_DIR}/target/library
 )
 
-add_library(CRuntimeWrapper SHARED ${SOURCES} ${INCLUDES})
+add_library(NativeRuntimeWrapper SHARED ${SOURCES} ${INCLUDES})
 target_include_directories(
-		CRuntimeWrapper PRIVATE
+		NativeRuntimeWrapper PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}/target/include
 		$ENV{JAVA_HOME}/include $ENV{JAVA_HOME}/include/linux
 )

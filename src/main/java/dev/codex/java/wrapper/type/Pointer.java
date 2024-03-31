@@ -1,6 +1,6 @@
 package dev.codex.java.wrapper.type;
 
-import dev.codex.java.wrapper.runtime.CRuntimeWrapper;
+import dev.codex.java.wrapper.runtime.NativeRuntimeWrapper;
 
 public interface Pointer extends AutoCloseable {
     MemoryAddress address();
@@ -9,6 +9,6 @@ public interface Pointer extends AutoCloseable {
     void setSize(long size);
 
     default void close() {
-        CRuntimeWrapper.free(this);
+        NativeRuntimeWrapper.free(this);
     }
 }

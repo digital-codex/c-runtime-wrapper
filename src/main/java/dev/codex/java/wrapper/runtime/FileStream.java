@@ -16,6 +16,6 @@ public final class FileStream extends AbstractPointer {
 
     @Override
     public void close() {
-        CRuntimeWrapper.fclose(this);
+        NativeRuntimeWrapper.fclose(this);
     }
 }

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InterfaceRequestTest {
     @Test
     void test_interface_request() {
-        try (InterfaceRequest ifr = CRuntimeWrapper.malloc(InterfaceRequest.class)) {
+        try (InterfaceRequest ifr = NativeRuntimeWrapper.malloc(InterfaceRequest.class)) {
             ifr.setName("tun0".getBytes(Charset.defaultCharset()));
             assertArrayEquals("tun0\0".getBytes(Charset.defaultCharset()), ifr.getName());
 

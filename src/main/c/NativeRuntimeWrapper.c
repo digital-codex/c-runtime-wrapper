@@ -1,4 +1,4 @@
-#include <dev_codex_java_wrapper_runtime_CRuntimeWrapper.h>
+#include <dev_codex_java_wrapper_runtime_NativeRuntimeWrapper.h>
 #include <dev_codex_java_wrapper_runtime_FileControl.h>
 #include <dev_codex_java_wrapper_runtime_StandardIO.h>
 #include <dev_codex_java_wrapper_runtime_StandardLibrary.h>
@@ -290,11 +290,11 @@ JNIEXPORT jbyteArray JNICALL Java_dev_codex_java_wrapper_runtime_Strings_strerro
 }
 
 /*
- * Class:     dev_codex_java_wrapper_runtime_CRuntimeWrapper
+ * Class:     dev_codex_java_wrapper_runtime_NativeRuntimeWrapper
  * Method:    initialize
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_dev_codex_java_wrapper_runtime_CRuntimeWrapper_initialize(JNIEnv *env, jclass clazz) {
+JNIEXPORT void JNICALL Java_dev_codex_java_wrapper_runtime_NativeRuntimeWrapper_initialize(JNIEnv *env, jclass clazz) {
     long_clazz = (*env)->FindClass(env, "java/lang/Long");
     valueOf = (*env)->GetStaticMethodID(env, long_clazz, "valueOf", "(J)Ljava/lang/Long;");
     longValue = (*env)->GetMethodID(env, long_clazz, "longValue", "()J");
