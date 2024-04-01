@@ -202,59 +202,14 @@ static jclass string_clazz;
 
 /*
  * Class:     dev_codex_java_runtime_unix_StandardIO
- * Method:    printf
- * Signature: (Ljava/lang/String;[Ljava/lang/Object;)V
+ * Method:    println
+ * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT void JNICALL Java_dev_codex_java_runtime_unix_StandardIO_printf(JNIEnv *env, jclass clazz, jstring j_format, jobjectArray j_args) {
-    int len = (int) (*env)->GetArrayLength(env (jarray) j_args);
-    int size = 0;
-    for (int i = 0; i < len; ++i) {
-        jobject element = (*env)->GetObjectArrayElement(env, j_args, i);
-        if (((bool) (*env)->IsInstanceOf(env, element, int_clazz)) || ((bool) (*env)->IsInstanceOf(env, element, int_primitive_clazz))) {
-            size += sizeof(int);
-        } else if (((bool) (*env)->IsInstanceOf(env, element, double_clazz)) || ((bool) (*env)->IsInstanceOf(env, element, double_primitive_clazz))) {
-            size += sizeof(double*);
-        } else if (((bool) (*env)->IsInstanceOf(env, element, char_clazz)) || ((bool) (*env)->IsInstanceOf(env, element, char_primitive_clazz))) {
-            size += sizeof(char);
-        } else {
-            size += sizeof(char*);
-        }
-    }
-    char* ptr (char*) malloc(size);
-    void* args = ptr;
-    for (int i = 0; i < len; ++i) {
-        jobject element = (*env)->GetObjectArrayElement(env, j_args, i);
-        if ((bool) (*env)->IsInstanceOf(env, element, int_clazz)) {
-            // TODO: fill this out
-        } else if ((bool) (*env)->IsInstanceOf(env, element, int_primitive_clazz)) {
-            // TODO: cannot cast object to a value
-            (*(int*)ptr) = (int) element;
-            ptr += sizeof(int);
-        } else if ((bool) (*env)->IsInstanceOf(env, element, double_clazz)) {
-            // TODO: fill this out
-        } else if ((bool) (*env)->IsInstanceOf(env, element, double_primitive_clazz)) {
-            // TODO: cannot cast object to a value
-            (*(double*)ptr) = (double) element;
-            ptr += sizeof(double*);
-        } else if ((bool) (*env)->IsInstanceOf(env, element, char_clazz)) {
-            // TODO: fill this out
-        } else if ((bool) (*env)->IsInstanceOf(env, element, char_primitive_clazz)) {
-            // TODO: cannot cast object to a value
-            (*(char*)ptr) = (char) element;
-            ptr += sizeof(char);
-        } else if ((bool) (*env)->IsInstanceOf(env, element, string_clazz)) {
-            const char* string = (*env)->GetStringUTFChars(env, (jstring) element, NULL);
-            (*(char**)ptr) = string;
-            ptr += sizeof(char*);
-            (*env)->ReleaseStringUTFChars(env, element, string);
-        } else {
-            // TODO: call toString
-        }
-    }
-
-    const char* format = (*env)->GetStringUTFChars(env, j_format, NULL);
-    vprintf(format, args);
-    (*env)->ReleaseStringUTFChars(env, j_format, format);
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_println(JNIEnv *env, jclass clazz, jstring j_string) {
+    const char* string = (*env)->GetStringUTFChars(env, j_string, NULL);
+    int ret = printf("%s\n", string);
+    (*env)->ReleaseStringUTFChars(env, j_string, string);
+    return (jint) ret;
 */
 }
 

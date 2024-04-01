@@ -195,8 +195,10 @@ public final class NativeRuntimeWrapper {
         return NativeRuntimeWrapper.realloc(ptr, nmemb * size);
     }
 
-    public static void printf(String format, Object... args) {
-        StandardIO.printf(format, args);
+    public static void println(String string) {
+        if (StandardIO.println(string) < 0) {
+            throw NativeRuntimeWrapper.perror("println");
+        }
     }
 
     public static NativeError perror(String s) {
@@ -232,9 +234,6 @@ public final class NativeRuntimeWrapper {
             throw NativeRuntimeWrapper.perror("write");
         }
         return n;
-    }
-
-    public static void main(String... args) {
     }
 
     private static native void initialize();

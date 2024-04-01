@@ -19,5 +19,5 @@ final class StandardIO {
     static native int fgetpos(Long stream, Long pos);
     static native int fsetpos(Long stream, Long pos);
 
-    static native void printf(String format, Object... args);
+    static native int println(String string);
 }
