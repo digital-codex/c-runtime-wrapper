@@ -14,6 +14,7 @@
 #include <linux/if.h>
 
 #include <fcntl.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -191,15 +192,70 @@ JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fsetpos(JNIEn
     return (jint) fgetpos((FILE*) (*env)->CallObjectMethod(env, j_stream, longValue), (fpos_t*) (*env)->CallObjectMethod(env, j_pos, longValue));
 }
 
+static jclass int_clazz;
+static jclass int_primitive_clazz;
+static jclass double_clazz;
+static jclass double_primitive_clazz;
+static jclass char_clazz;
+static jclass char_primitive_clazz;
+static jclass string_clazz;
+
 /*
  * Class:     dev_codex_java_runtime_unix_StandardIO
  * Method:    printf
- * Signature: (Ljava/lang/String;)V
+ * Signature: (Ljava/lang/String;[Ljava/lang/Object;)V
  */
-JNIEXPORT void JNICALL Java_dev_codex_java_runtime_unix_StandardIO_printf(JNIEnv *env, jclass clazz, jstring j_out) {
-    const char* out = (*env)->GetStringUTFChars(env, j_out, NULL);
-    printf("%s\n", out);
-    (*env)->ReleaseStringUTFChars(env, j_out, out);
+JNIEXPORT void JNICALL Java_dev_codex_java_runtime_unix_StandardIO_printf(JNIEnv *env, jclass clazz, jstring j_format, jobjectArray j_args) {
+    int len = (int) (*env)->GetArrayLength(env (jarray) j_args);
+    int size = 0;
+    for (int i = 0; i < len; ++i) {
+        jobject element = (*env)->GetObjectArrayElement(env, j_args, i);
+        if (((bool) (*env)->IsInstanceOf(env, element, int_clazz)) || ((bool) (*env)->IsInstanceOf(env, element, int_primitive_clazz))) {
+            size += sizeof(int);
+        } else if (((bool) (*env)->IsInstanceOf(env, element, double_clazz)) || ((bool) (*env)->IsInstanceOf(env, element, double_primitive_clazz))) {
+            size += sizeof(double*);
+        } else if (((bool) (*env)->IsInstanceOf(env, element, char_clazz)) || ((bool) (*env)->IsInstanceOf(env, element, char_primitive_clazz))) {
+            size += sizeof(char);
+        } else {
+            size += sizeof(char*);
+        }
+    }
+    char* ptr (char*) malloc(size);
+    void* args = ptr;
+    for (int i = 0; i < len; ++i) {
+        jobject element = (*env)->GetObjectArrayElement(env, j_args, i);
+        if ((bool) (*env)->IsInstanceOf(env, element, int_clazz)) {
+            // TODO: fill this out
+        } else if ((bool) (*env)->IsInstanceOf(env, element, int_primitive_clazz)) {
+            // TODO: cannot cast object to a value
+            (*(int*)ptr) = (int) element;
+            ptr += sizeof(int);
+        } else if ((bool) (*env)->IsInstanceOf(env, element, double_clazz)) {
+            // TODO: fill this out
+        } else if ((bool) (*env)->IsInstanceOf(env, element, double_primitive_clazz)) {
+            // TODO: cannot cast object to a value
+            (*(double*)ptr) = (double) element;
+            ptr += sizeof(double*);
+        } else if ((bool) (*env)->IsInstanceOf(env, element, char_clazz)) {
+            // TODO: fill this out
+        } else if ((bool) (*env)->IsInstanceOf(env, element, char_primitive_clazz)) {
+            // TODO: cannot cast object to a value
+            (*(char*)ptr) = (char) element;
+            ptr += sizeof(char);
+        } else if ((bool) (*env)->IsInstanceOf(env, element, string_clazz)) {
+            const char* string = (*env)->GetStringUTFChars(env, (jstring) element, NULL);
+            (*(char**)ptr) = string;
+            ptr += sizeof(char*);
+            (*env)->ReleaseStringUTFChars(env, element, string);
+        } else {
+            // TODO: call toString
+        }
+    }
+
+    const char* format = (*env)->GetStringUTFChars(env, j_format, NULL);
+    vprintf(format, args);
+    (*env)->ReleaseStringUTFChars(env, j_format, format);
+*/
 }
 
 /*
@@ -300,6 +356,17 @@ JNIEXPORT void JNICALL Java_dev_codex_java_runtime_unix_NativeRuntimeWrapper_ini
     long_clazz = (*env)->FindClass(env, "java/lang/Long");
     valueOf = (*env)->GetStaticMethodID(env, long_clazz, "valueOf", "(J)Ljava/lang/Long;");
     longValue = (*env)->GetMethodID(env, long_clazz, "longValue", "()J");
+
+    int_clazz = (*env)->FindClass("java/lang/Integer");
+    jfieldID int_type = (*env)->GetStaticFieldID(env, int_clazz, "TYPE", "Ljava/lang/Class;");
+    int_primitive_clazz = (jclass) (*env)->GetStaticObjectField(env, int_clazz, int_type);
+    double_clazz = (*env)->FindClass("java/lang/Double");
+    jfieldID double_type = (*env)->GetStaticFieldID(env, double_clazz, "TYPE", "Ljava/lang/Class;");
+    double_primitive_clazz = (jclass) (*env)->GetStaticObjectField(env, double_clazz, double_type);
+    char_clazz = (*env)->FindClass("java/lang/Character");
+    jfieldID char_type = (*env)->GetStaticFieldID(env, char_clazz, "TYPE", "Ljava/lang/Class;");
+    char_primitive_clazz = (jclass) (*env)->GetStaticObjectField(env, char_clazz, char_type);
+    string_clazz = (*env)->FindClass("java/lang/String");
 }
 
 #ifdef __cplusplus

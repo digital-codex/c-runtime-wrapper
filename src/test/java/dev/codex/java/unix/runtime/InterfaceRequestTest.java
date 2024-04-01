@@ -22,11 +22,12 @@ class InterfaceRequestTest {
     void test_interface_request() {
         try (InterfaceRequest ifr = NativeRuntimeWrapper.malloc(InterfaceRequest.class)) {
             ifr.setName("tun0".getBytes(Charset.defaultCharset()));
-            System.out.println(new String(ifr.getName()));
             assertArrayEquals("tun0\0".getBytes(Charset.defaultCharset()), ifr.getName());
 
             ifr.addFlags(NETWORK_TUNNEL, NO_PACKET_INFORMATION);
             assertEquals(Flag.valueOf(NETWORK_TUNNEL, NO_PACKET_INFORMATION), ifr.getFlags());
+            ifr.removeFlag(NO_PACKET_INFORMATION);
+            assertEquals(Flag.valueOf(NETWORK_TUNNEL), ifr.getFlags());
         } catch (NativeError error) {
             fail(error.getMessage());
         }
