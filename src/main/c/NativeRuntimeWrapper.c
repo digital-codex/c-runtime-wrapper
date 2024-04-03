@@ -311,17 +311,6 @@ JNIEXPORT void JNICALL Java_dev_codex_java_runtime_unix_NativeRuntimeWrapper_ini
     long_clazz = (*env)->FindClass(env, "java/lang/Long");
     valueOf = (*env)->GetStaticMethodID(env, long_clazz, "valueOf", "(J)Ljava/lang/Long;");
     longValue = (*env)->GetMethodID(env, long_clazz, "longValue", "()J");
-
-    int_clazz = (*env)->FindClass("java/lang/Integer");
-    jfieldID int_type = (*env)->GetStaticFieldID(env, int_clazz, "TYPE", "Ljava/lang/Class;");
-    int_primitive_clazz = (jclass) (*env)->GetStaticObjectField(env, int_clazz, int_type);
-    double_clazz = (*env)->FindClass("java/lang/Double");
-    jfieldID double_type = (*env)->GetStaticFieldID(env, double_clazz, "TYPE", "Ljava/lang/Class;");
-    double_primitive_clazz = (jclass) (*env)->GetStaticObjectField(env, double_clazz, double_type);
-    char_clazz = (*env)->FindClass("java/lang/Character");
-    jfieldID char_type = (*env)->GetStaticFieldID(env, char_clazz, "TYPE", "Ljava/lang/Class;");
-    char_primitive_clazz = (jclass) (*env)->GetStaticObjectField(env, char_clazz, char_type);
-    string_clazz = (*env)->FindClass("java/lang/String");
 }
 
 #ifdef __cplusplus
