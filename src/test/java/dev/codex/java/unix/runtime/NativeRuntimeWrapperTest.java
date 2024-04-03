@@ -21,7 +21,7 @@ class NativeRuntimeWrapperTest {
 
     @Test
     void test_parse_sh_executable_with_open_then_assert_magic_and_class() {
-        FileDescriptor fd = NativeRuntimeWrapper.open("/bin/sh", AccessCode.WRITE_ONLY);
+        FileDescriptor fd = NativeRuntimeWrapper.open("/bin/sh", AccessCode.READ_ONLY);
         byte[] buffer = new byte[4];
 
         long ret = NativeRuntimeWrapper.read(fd, buffer, buffer.length);
