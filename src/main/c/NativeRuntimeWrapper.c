@@ -210,7 +210,6 @@ JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_println(JNIEn
     int ret = printf("%s\n", string);
     (*env)->ReleaseStringUTFChars(env, j_string, string);
     return (jint) ret;
-*/
 }
 
 /*
