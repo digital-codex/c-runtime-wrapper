@@ -195,6 +195,12 @@ public final class NativeRuntimeWrapper {
         return NativeRuntimeWrapper.realloc(ptr, nmemb * size);
     }
 
+    public static void print(String string) {
+        if (StandardIO.print(string) < 0) {
+            throw NativeRuntimeWrapper.perror("print");
+        }
+    }
+
     public static void println(String string) {
         if (StandardIO.println(string) < 0) {
             throw NativeRuntimeWrapper.perror("println");

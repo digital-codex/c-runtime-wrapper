@@ -192,13 +192,17 @@ JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_fsetpos(JNIEn
     return (jint) fgetpos((FILE*) (*env)->CallObjectMethod(env, j_stream, longValue), (fpos_t*) (*env)->CallObjectMethod(env, j_pos, longValue));
 }
 
-static jclass int_clazz;
-static jclass int_primitive_clazz;
-static jclass double_clazz;
-static jclass double_primitive_clazz;
-static jclass char_clazz;
-static jclass char_primitive_clazz;
-static jclass string_clazz;
+/*
+ * Class:     dev_codex_java_runtime_unix_StandardIO
+ * Method:    print
+ * Signature: (Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_dev_codex_java_runtime_unix_StandardIO_print(JNIEnv *env, jclass clazz, jstring j_string) {
+    const char* string = (*env)->GetStringUTFChars(env, j_string, NULL);
+    int ret = printf("%s", string);
+    (*env)->ReleaseStringUTFChars(env, j_string, string);
+    return (jint) ret;
+}
 
 /*
  * Class:     dev_codex_java_runtime_unix_StandardIO
